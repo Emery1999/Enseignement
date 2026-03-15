@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192">
+  <!-- Fond sombre avec coins arrondis (maskable = zone sûre au centre 72px) -->
+  <rect width="192" height="192" rx="36" fill="#080C14"/>
+  <!-- Icône casque centré, couleur or -->
+  <path d="M96 34C63.4 34 37 60.4 37 93v37a9 9 0 009 9h7a9 9 0 009-9v-14a9 9 0 00-9-9h-7v-14a50 50 0 01100 0v14h-7a9 9 0 00-9 9v14a9 9 0 009 9h7a9 9 0 009-9V93C155 60.4 128.6 34 96 34z" fill="#F0B429"/>
+</svg>

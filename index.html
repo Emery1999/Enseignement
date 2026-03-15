@@ -1,0 +1,2805 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Enseignements">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#080C14">
+<title>Enseignements</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&display=swap" rel="stylesheet"/>
+<style>
+/* ═══ TOKENS ═══════════════════════════════════════════════ */
+:root{
+  --bg-void:#080C14;--bg-base:#0D1220;--bg-surface:#111827;
+  --bg-elevated:#1A2235;--bg-glass:rgba(26,34,53,.72);
+  --sidebar-bg:#090E1B;--sidebar-width:260px;
+  --gold:#F0B429;--gold-dim:#D4982B;--gold-glow:rgba(240,180,41,.18);
+  --indigo:#6366F1;--emerald:#10B981;--rose:#F43F5E;--sky:#38BDF8;--violet:#8B5CF6;
+  --text-primary:#F1F5F9;--text-secondary:#94A3B8;--text-muted:#475569;--text-disabled:#334155;
+  --border:rgba(255,255,255,.06);--border-hover:rgba(255,255,255,.12);
+  --radius-sm:8px;--radius-md:14px;--radius-lg:20px;--radius-xl:28px;
+  --shadow-sm:0 2px 8px rgba(0,0,0,.4);--shadow-md:0 8px 24px rgba(0,0,0,.5);
+  --shadow-lg:0 20px 48px rgba(0,0,0,.6);--shadow-gold:0 0 32px rgba(240,180,41,.15);
+  --t:.22s cubic-bezier(.4,0,.2,1);--t-slow:.4s cubic-bezier(.4,0,.2,1);
+  --font:'Sora',sans-serif;--font-d:'Fraunces',serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);background:var(--bg-void);color:var(--text-primary);
+  line-height:1.6;min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");opacity:.4}
+
+/* ── LAYOUT ── */
+#app{display:flex;min-height:100vh;position:relative;z-index:1}
+
+/* ── SIDEBAR ── */
+#sidebar{width:var(--sidebar-width);min-height:100vh;background:var(--sidebar-bg);
+  border-right:1px solid var(--border);display:flex;flex-direction:column;
+  position:fixed;left:0;top:0;bottom:0;z-index:100;
+  transition:width var(--t-slow),transform var(--t-slow);overflow:hidden}
+#sidebar::after{content:'';position:absolute;top:0;right:0;width:1px;height:100%;
+  background:linear-gradient(180deg,transparent 0%,var(--gold) 30%,var(--gold-dim) 70%,transparent 100%);opacity:.25}
+.sidebar-header{padding:28px 20px 24px;border-bottom:1px solid var(--border);flex-shrink:0}
+.logo-wrapper{display:flex;align-items:center;gap:12px;text-decoration:none}
+.logo-icon{width:40px;height:40px;background:linear-gradient(135deg,var(--gold),var(--gold-dim));
+  border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  box-shadow:0 4px 12px rgba(240,180,41,.3)}
+.logo-icon svg{width:22px;height:22px}
+.logo-name{font-family:var(--font-d);font-weight:600;font-size:17px;color:var(--text-primary);letter-spacing:.02em;white-space:nowrap}
+.logo-tagline{font-size:10.5px;color:var(--text-muted);letter-spacing:.08em;text-transform:uppercase;white-space:nowrap}
+.sidebar-nav{flex:1;padding:16px 12px;overflow-y:auto;overflow-x:hidden}
+.nav-section-label{font-size:9.5px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--text-disabled);padding:12px 10px 6px;white-space:nowrap}
+.nav-item{display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:var(--radius-md);
+  cursor:pointer;transition:all var(--t);position:relative;margin-bottom:2px;
+  border:1px solid transparent;user-select:none;text-decoration:none;color:var(--text-secondary);overflow:hidden}
+.nav-item::before{content:'';position:absolute;inset:0;border-radius:inherit;
+  background:linear-gradient(90deg,var(--gold-glow),transparent);opacity:0;transition:opacity var(--t)}
+.nav-item:hover{color:var(--text-primary);background:rgba(255,255,255,.04);border-color:var(--border)}
+.nav-item:hover::before{opacity:1}
+.nav-item.active{color:var(--gold);background:rgba(240,180,41,.08);border-color:rgba(240,180,41,.2);box-shadow:var(--shadow-gold)}
+.nav-item.active::before{opacity:1}
+.nav-item.active::after{content:'';position:absolute;left:0;top:20%;bottom:20%;width:3px;
+  background:var(--gold);border-radius:0 4px 4px 0}
+.nav-icon{width:36px;height:36px;display:flex;align-items:center;justify-content:center;
+  border-radius:10px;background:rgba(255,255,255,.04);flex-shrink:0;transition:all var(--t)}
+.nav-item.active .nav-icon{background:rgba(240,180,41,.15)}
+.nav-icon svg{width:18px;height:18px}
+.nav-label{font-size:13.5px;font-weight:500;white-space:nowrap}
+.nav-badge{margin-left:auto;background:rgba(240,180,41,.2);color:var(--gold);font-size:10px;
+  font-weight:700;padding:2px 7px;border-radius:20px;white-space:nowrap}
+.sidebar-footer{padding:16px 12px;border-top:1px solid var(--border);flex-shrink:0}
+.sidebar-user{display:flex;align-items:center;gap:10px;padding:10px;
+  border-radius:var(--radius-md);background:rgba(255,255,255,.03);border:1px solid var(--border)}
+.avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--indigo),var(--gold));
+  display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0}
+.user-name{font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--text-primary)}
+.user-role{font-size:10px;color:var(--text-muted)}
+
+/* ── MAIN ── */
+#main{margin-left:var(--sidebar-width);flex:1;display:flex;flex-direction:column;min-width:0;transition:margin-left var(--t-slow)}
+.topbar{background:rgba(13,18,32,.8);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);
+  padding:0 32px;height:64px;display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;z-index:50}
+.topbar-left{display:flex;align-items:center;gap:16px}
+.menu-btn{display:none;width:36px;height:36px;border:1px solid var(--border);background:rgba(255,255,255,.04);
+  border-radius:var(--radius-sm);align-items:center;justify-content:center;cursor:pointer;
+  color:var(--text-secondary);transition:all var(--t)}
+.menu-btn:hover{background:rgba(255,255,255,.08);color:var(--text-primary)}
+.page-breadcrumb{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-secondary)}
+.breadcrumb-sep{opacity:.4}
+.page-title-bar{font-weight:600;color:var(--text-primary);font-size:14px}
+.topbar-right{display:flex;align-items:center;gap:12px}
+.topbar-btn{width:36px;height:36px;border:1px solid var(--border);background:rgba(255,255,255,.04);
+  border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;
+  cursor:pointer;color:var(--text-secondary);transition:all var(--t);position:relative}
+.topbar-btn:hover{background:rgba(255,255,255,.08);color:var(--text-primary)}
+.topbar-badge{position:absolute;top:6px;right:6px;width:7px;height:7px;background:var(--gold);
+  border-radius:50%;border:1.5px solid var(--bg-surface)}
+.content{padding:32px;flex:1}
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);
+  backdrop-filter:blur(4px);z-index:99;opacity:0;transition:opacity var(--t)}
+
+/* ── PAGE SYSTEM ── */
+.page{display:none}
+.page.active{display:block;animation:fadeIn .25s ease}
+.page.flex-page{display:none}
+.page.flex-page.active{display:flex;animation:fadeIn .25s ease}
+
+/* ── DASHBOARD STYLES (kept from v1) ── */
+.dash-header{margin-bottom:32px;display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.dash-greeting-label{font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:6px}
+.dash-title{font-family:var(--font-d);font-size:clamp(22px,3vw,32px);font-weight:600;color:var(--text-primary);font-style:italic;line-height:1.2}
+.dash-subtitle{font-size:13px;color:var(--text-muted);margin-top:4px}
+.dash-date-pill{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:20px;padding:8px 16px;font-size:12px;color:var(--text-secondary);white-space:nowrap;flex-shrink:0}
+.stats-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;margin-bottom:36px}
+.stat-card{background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;position:relative;overflow:hidden;transition:all var(--t);cursor:default}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;border-radius:var(--radius-lg) var(--radius-lg) 0 0;opacity:0;transition:opacity var(--t)}
+.stat-card:hover{transform:translateY(-3px);border-color:rgba(255,255,255,.1);box-shadow:var(--shadow-md)}
+.stat-card:hover::before{opacity:1}
+.stat-card.gold::before{background:linear-gradient(90deg,var(--gold),transparent)}
+.stat-card.indigo::before{background:linear-gradient(90deg,var(--indigo),transparent)}
+.stat-card.emerald::before{background:linear-gradient(90deg,var(--emerald),transparent)}
+.stat-card.sky::before{background:linear-gradient(90deg,var(--sky),transparent)}
+.stat-card.rose::before{background:linear-gradient(90deg,var(--rose),transparent)}
+.stat-icon{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:14px}
+.stat-card.gold .stat-icon{background:rgba(240,180,41,.12);color:var(--gold)}
+.stat-card.indigo .stat-icon{background:rgba(99,102,241,.12);color:var(--indigo)}
+.stat-card.emerald .stat-icon{background:rgba(16,185,129,.12);color:var(--emerald)}
+.stat-card.sky .stat-icon{background:rgba(56,189,248,.12);color:var(--sky)}
+.stat-card.rose .stat-icon{background:rgba(244,63,94,.12);color:var(--rose)}
+.stat-icon svg{width:20px;height:20px}
+.stat-value{font-family:var(--font-d);font-size:36px;font-weight:600;line-height:1;margin-bottom:4px}
+.stat-card.gold .stat-value{color:var(--gold)}
+.stat-card.indigo .stat-value{color:var(--indigo)}
+.stat-card.emerald .stat-value{color:var(--emerald)}
+.stat-card.sky .stat-value{color:var(--sky)}
+.stat-card.rose .stat-value{color:var(--rose)}
+.stat-label{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted)}
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.section-title{display:flex;align-items:center;gap:10px;font-size:15px;font-weight:600;color:var(--text-primary)}
+.section-dot{width:8px;height:8px;border-radius:50%;background:var(--gold);box-shadow:0 0 8px var(--gold);animation:pulse 2s infinite}
+.section-action{font-size:12px;color:var(--text-muted);cursor:pointer;display:flex;align-items:center;gap:6px;
+  padding:6px 12px;border-radius:20px;border:1px solid var(--border);background:rgba(255,255,255,.02);transition:all var(--t)}
+.section-action:hover{color:var(--gold);border-color:rgba(240,180,41,.3);background:rgba(240,180,41,.06)}
+.teachings-grid{display:grid;gap:12px}
+.teaching-card{background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:0;
+  display:flex;align-items:stretch;overflow:hidden;transition:all var(--t);position:relative}
+.teaching-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--gold);opacity:0;transition:opacity var(--t)}
+.teaching-card:hover{border-color:rgba(255,255,255,.1);box-shadow:var(--shadow-md);transform:translateX(4px)}
+.teaching-card:hover::before{opacity:1}
+.teaching-num{width:52px;display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  font-family:var(--font-d);font-size:22px;font-weight:600;color:var(--text-disabled);
+  border-right:1px solid var(--border);background:rgba(255,255,255,.01)}
+.teaching-body{flex:1;padding:16px 18px;min-width:0;display:flex;flex-direction:column;gap:8px}
+.teaching-meta{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.theme-chip{font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
+  padding:3px 10px;border-radius:20px;background:rgba(240,180,41,.12);color:var(--gold);border:1px solid rgba(240,180,41,.2)}
+.teaching-date{font-size:11px;color:var(--text-muted)}
+.teaching-title{font-size:14px;font-weight:600;color:var(--text-primary);line-height:1.4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.teaching-footer{display:flex;align-items:center;gap:12px}
+.teaching-duration,.teaching-ecoutes{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text-muted)}
+.teaching-actions{display:flex;align-items:center;gap:8px;padding:16px 18px;flex-shrink:0}
+.play-btn{width:40px;height:40px;border-radius:50%;background:rgba(240,180,41,.1);border:1.5px solid rgba(240,180,41,.3);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--gold);transition:all var(--t);flex-shrink:0}
+.play-btn:hover{background:var(--gold);color:var(--bg-void);box-shadow:0 0 20px rgba(240,180,41,.4);transform:scale(1.08)}
+.play-btn svg{width:14px;height:14px;margin-left:1px}
+.fav-btn{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.04);border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-muted);transition:all var(--t)}
+.fav-btn:hover{color:var(--rose);border-color:rgba(244,63,94,.3)}
+.fav-btn.active{color:var(--rose);border-color:rgba(244,63,94,.3);background:rgba(244,63,94,.08)}
+.skeleton{background:linear-gradient(90deg,rgba(255,255,255,.04) 25%,rgba(255,255,255,.08) 50%,rgba(255,255,255,.04) 75%);
+  background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:var(--radius-sm)}
+.loading-card{background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;display:flex;gap:16px;align-items:center}
+.empty-state{text-align:center;padding:48px 24px;background:var(--bg-surface);border:1px dashed rgba(255,255,255,.08);border-radius:var(--radius-lg)}
+.empty-icon{width:64px;height:64px;margin:0 auto 16px;background:rgba(240,180,41,.08);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--gold)}
+.empty-icon svg{width:28px;height:28px}
+.empty-title{font-weight:600;margin-bottom:6px}
+.empty-desc{font-size:13px;color:var(--text-muted)}
+
+/* ── PAGE HEADER ── */
+.page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;flex-wrap:wrap;gap:16px}
+.page-header-left{}
+.page-header-label{font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:6px}
+.page-header-title{font-family:var(--font-d);font-size:clamp(20px,2.5vw,28px);font-weight:600;font-style:italic;color:var(--text-primary)}
+.page-header-sub{font-size:13px;color:var(--text-muted);margin-top:3px}
+.btn-primary{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,var(--gold),var(--gold-dim));
+  color:var(--bg-void);font-size:13px;font-weight:700;padding:10px 20px;border-radius:var(--radius-md);
+  border:none;cursor:pointer;transition:all var(--t);letter-spacing:.02em;white-space:nowrap}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(240,180,41,.35)}
+.btn-primary:active{transform:translateY(0)}
+.btn-primary svg{width:16px;height:16px}
+.btn-ghost{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.05);
+  color:var(--text-secondary);font-size:13px;font-weight:500;padding:10px 18px;border-radius:var(--radius-md);
+  border:1px solid var(--border);cursor:pointer;transition:all var(--t)}
+.btn-ghost:hover{background:rgba(255,255,255,.09);color:var(--text-primary);border-color:var(--border-hover)}
+.btn-danger{display:inline-flex;align-items:center;gap:8px;background:rgba(244,63,94,.1);
+  color:var(--rose);font-size:13px;font-weight:500;padding:10px 18px;border-radius:var(--radius-md);
+  border:1px solid rgba(244,63,94,.25);cursor:pointer;transition:all var(--t)}
+.btn-danger:hover{background:rgba(244,63,94,.18);border-color:rgba(244,63,94,.4)}
+
+/* ═══ THEMES PAGE ═════════════════════════════════════════ */
+.themes-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+.theme-card{background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--radius-lg);
+  overflow:hidden;transition:all var(--t);position:relative}
+.theme-card:hover{transform:translateY(-4px);border-color:rgba(255,255,255,.12);box-shadow:var(--shadow-md)}
+.theme-card-accent{height:4px;width:100%;flex-shrink:0}
+.theme-card-body{padding:20px}
+.theme-card-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px}
+.theme-card-icon{width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.theme-card-icon svg{width:22px;height:22px}
+.theme-actions-trigger{width:32px;height:32px;border-radius:8px;border:1px solid var(--border);
+  background:rgba(255,255,255,.03);display:flex;align-items:center;justify-content:center;
+  cursor:pointer;color:var(--text-muted);transition:all var(--t);flex-shrink:0;position:relative}
+.theme-actions-trigger:hover{background:rgba(255,255,255,.08);color:var(--text-primary)}
+.theme-name{font-size:16px;font-weight:700;color:var(--text-primary);margin-bottom:6px;line-height:1.3}
+.theme-desc{font-size:12.5px;color:var(--text-muted);line-height:1.55;margin-bottom:16px;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.theme-last{font-size:11px;color:var(--text-muted);margin-top:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.theme-card-footer{display:flex;align-items:center;justify-content:space-between;
+  padding-top:14px;border-top:1px solid var(--border)}
+.theme-stat{display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--text-muted)}
+.theme-stat svg{width:13px;height:13px}
+.theme-date{font-size:10.5px;color:var(--text-disabled)}
+
+/* Dropdown menu */
+.dropdown-menu{position:absolute;top:calc(100% + 6px);right:0;background:var(--bg-elevated);
+  border:1px solid var(--border-hover);border-radius:var(--radius-md);padding:6px;
+  min-width:150px;z-index:200;box-shadow:var(--shadow-lg);
+  animation:fadeInDown .15s ease;display:none}
+.dropdown-menu.open{display:block}
+.dropdown-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:var(--radius-sm);
+  cursor:pointer;font-size:13px;color:var(--text-secondary);transition:all var(--t);white-space:nowrap}
+.dropdown-item:hover{background:rgba(255,255,255,.06);color:var(--text-primary)}
+.dropdown-item.danger{color:var(--rose)}
+.dropdown-item.danger:hover{background:rgba(244,63,94,.1);color:var(--rose)}
+.dropdown-item svg{width:14px;height:14px;flex-shrink:0}
+
+/* ═══ ENSEIGNEMENTS PAGE (devenu thèmes) ══════════════════════════════════ */
+.ens-toolbar{display:flex;align-items:center;gap:12px;margin-bottom:20px;flex-wrap:wrap}
+.search-box{display:flex;align-items:center;gap:10px;flex:1;min-width:200px;
+  background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--radius-md);
+  padding:0 14px;transition:all var(--t)}
+.search-box:focus-within{border-color:rgba(240,180,41,.4);box-shadow:0 0 0 3px rgba(240,180,41,.08)}
+.search-box svg{width:15px;height:15px;color:var(--text-muted);flex-shrink:0}
+.search-box input{background:none;border:none;outline:none;font-family:var(--font);font-size:13px;
+  color:var(--text-primary);padding:11px 0;width:100%}
+.search-box input::placeholder{color:var(--text-disabled)}
+.filter-select{background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--radius-md);
+  padding:11px 14px;font-family:var(--font);font-size:13px;color:var(--text-secondary);
+  outline:none;cursor:pointer;transition:all var(--t)}
+.filter-select:focus{border-color:rgba(240,180,41,.4)}
+
+/* Enseignement list cards */
+.ens-list{display:flex;flex-direction:column;gap:10px}
+.ens-card{background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--radius-lg);
+  display:flex;align-items:center;gap:0;overflow:hidden;transition:all var(--t);position:relative}
+.ens-card:hover{border-color:rgba(255,255,255,.1);box-shadow:var(--shadow-md)}
+.ens-card-play{width:64px;display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;padding:16px 0;border-right:1px solid var(--border);align-self:stretch}
+.ens-play-btn{width:40px;height:40px;border-radius:50%;background:rgba(240,180,41,.1);
+  border:1.5px solid rgba(240,180,41,.25);display:flex;align-items:center;justify-content:center;
+  cursor:pointer;color:var(--gold);transition:all var(--t)}
+.ens-play-btn:hover{background:var(--gold);color:var(--bg-void);box-shadow:0 0 20px rgba(240,180,41,.4);transform:scale(1.08)}
+.ens-play-btn.no-audio{color:var(--text-disabled);border-color:var(--border);background:rgba(255,255,255,.02);cursor:default}
+.ens-play-btn.no-audio:hover{transform:none;box-shadow:none;background:rgba(255,255,255,.02);color:var(--text-disabled)}
+.ens-play-btn svg{width:14px;height:14px;margin-left:2px}
+.ens-card-body{flex:1;padding:14px 16px;min-width:0}
+.ens-card-meta{display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap}
+.ens-theme-chip{font-size:9.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;
+  padding:2.5px 9px;border-radius:20px}
+.ens-card-title{font-size:14px;font-weight:600;color:var(--text-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:6px}
+.ens-card-info{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.ens-info-item{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--text-muted)}
+.ens-info-item svg{width:11px;height:11px}
+.ens-card-actions{display:flex;align-items:center;gap:6px;padding:12px 14px;flex-shrink:0}
+.ens-fav-btn{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.04);border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-muted);transition:all var(--t)}
+.ens-fav-btn:hover{color:var(--rose);border-color:rgba(244,63,94,.3)}
+.ens-fav-btn.active{color:var(--rose);border-color:rgba(244,63,94,.3);background:rgba(244,63,94,.08)}
+.ens-fav-btn svg{width:14px;height:14px}
+.ens-menu-btn{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-muted);transition:all var(--t);position:relative}
+.ens-menu-btn:hover{background:rgba(255,255,255,.15);color:var(--text-primary);border-color:rgba(255,255,255,.3)}
+.ens-menu-btn svg{width:14px;height:14px}
+
+/* FAB */
+.fab{position:fixed;bottom:28px;right:28px;width:58px;height:58px;border-radius:50%;
+  background:linear-gradient(135deg,var(--gold),var(--gold-dim));border:none;
+  display:none;align-items:center;justify-content:center;cursor:pointer;
+  box-shadow:0 8px 28px rgba(240,180,41,.45);color:var(--bg-void);
+  transition:all var(--t);z-index:80;font-size:26px;font-weight:300}
+.fab:hover{transform:scale(1.1) rotate(45deg);box-shadow:0 12px 36px rgba(240,180,41,.6)}
+.fab svg{width:24px;height:24px}
+#page-enseignements.active~.fab,.fab.show{display:flex}
+
+/* ═══ MODALS ══════════════════════════════════════════════ */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(8px);
+  z-index:500;display:none;align-items:center;justify-content:center;padding:20px}
+.modal-overlay.open{display:flex;animation:fadeIn .2s ease}
+.modal{background:var(--bg-elevated);border:1px solid var(--border-hover);border-radius:var(--radius-xl);
+  width:100%;max-width:520px;max-height:90vh;overflow-y:auto;box-shadow:var(--shadow-lg);
+  animation:slideUp .25s cubic-bezier(.34,1.56,.64,1)}
+.modal.modal-lg{max-width:640px}
+.modal-header{padding:24px 28px 0;display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
+.modal-header-content{}
+.modal-label{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:6px}
+.modal-title{font-family:var(--font-d);font-size:22px;font-weight:600;font-style:italic;color:var(--text-primary)}
+.modal-close{width:34px;height:34px;border-radius:8px;background:rgba(255,255,255,.05);border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-muted);
+  transition:all var(--t);flex-shrink:0;margin-top:2px}
+.modal-close:hover{background:rgba(255,255,255,.1);color:var(--text-primary)}
+.modal-close svg{width:16px;height:16px}
+.modal-body{padding:24px 28px}
+.modal-footer{padding:0 28px 24px;display:flex;align-items:center;justify-content:flex-end;gap:10px}
+
+/* Form elements */
+.form-group{margin-bottom:18px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.form-label{display:block;font-size:11.5px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;
+  color:var(--text-muted);margin-bottom:8px}
+.form-input,.form-select,.form-textarea{width:100%;background:var(--bg-surface);border:1px solid var(--border);
+  border-radius:var(--radius-md);padding:11px 14px;font-family:var(--font);font-size:13.5px;
+  color:var(--text-primary);outline:none;transition:all var(--t)}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:rgba(240,180,41,.5);box-shadow:0 0 0 3px rgba(240,180,41,.1)}
+.form-input::placeholder,.form-textarea::placeholder{color:var(--text-disabled)}
+.form-textarea{resize:vertical;min-height:90px;line-height:1.6}
+.form-select option{background:var(--bg-elevated);color:var(--text-primary)}
+
+/* Color picker */
+.color-picker-group{display:flex;flex-direction:column;gap:10px}
+.color-presets{display:flex;gap:8px;flex-wrap:wrap}
+.color-dot{width:28px;height:28px;border-radius:50%;cursor:pointer;transition:all var(--t);
+  border:2px solid transparent;position:relative}
+.color-dot:hover{transform:scale(1.18)}
+.color-dot.selected{border-color:#fff;box-shadow:0 0 0 2px rgba(255,255,255,.3)}
+.color-dot.selected::after{content:'✓';position:absolute;inset:0;display:flex;align-items:center;
+  justify-content:center;font-size:12px;font-weight:700;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.5)}
+.color-custom-row{display:flex;align-items:center;gap:10px}
+.color-custom-row input[type=color]{width:36px;height:36px;border-radius:8px;border:1px solid var(--border);
+  cursor:pointer;padding:2px;background:var(--bg-surface)}
+.color-preview-text{font-size:12px;color:var(--text-muted);flex:1}
+
+/* File upload */
+.file-upload-zone{border:2px dashed var(--border);border-radius:var(--radius-md);padding:20px;
+  text-align:center;cursor:pointer;transition:all var(--t);position:relative}
+.file-upload-zone:hover,.file-upload-zone.drag-over{border-color:rgba(240,180,41,.4);background:rgba(240,180,41,.04)}
+.file-upload-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.file-upload-icon{width:40px;height:40px;border-radius:12px;background:rgba(240,180,41,.1);
+  display:flex;align-items:center;justify-content:center;margin:0 auto 10px;color:var(--gold)}
+.file-upload-icon svg{width:20px;height:20px}
+.file-upload-label{font-size:13px;font-weight:600;color:var(--text-primary);margin-bottom:4px}
+.file-upload-hint{font-size:11px;color:var(--text-muted)}
+.file-selected{display:none;align-items:center;gap:10px;background:rgba(16,185,129,.08);
+  border:1px solid rgba(16,185,129,.25);border-radius:var(--radius-md);padding:12px 14px;margin-top:10px}
+.file-selected.show{display:flex}
+.file-selected-icon{color:var(--emerald);flex-shrink:0}
+.file-selected-icon svg{width:16px;height:16px}
+.file-selected-name{font-size:12px;font-weight:600;color:var(--text-primary);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.file-selected-size{font-size:11px;color:var(--text-muted);white-space:nowrap}
+.file-remove{width:24px;height:24px;border-radius:50%;background:rgba(255,255,255,.06);border:none;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-muted);flex-shrink:0}
+.file-remove:hover{color:var(--rose)}
+.file-remove svg{width:12px;height:12px}
+.files-list{display:flex;flex-direction:column;gap:6px;margin-top:10px}
+progress {
+  accent-color: var(--gold);
+}
+
+/* Loading button state */
+.btn-loading{position:relative;pointer-events:none;opacity:.8}
+.btn-loading::after{content:'';position:absolute;width:14px;height:14px;border:2px solid currentColor;
+  border-top-color:transparent;border-radius:50%;animation:spin .6s linear infinite;right:14px;top:50%;margin-top:-7px}
+
+/* Confirm modal */
+.confirm-modal{max-width:400px}
+.confirm-body{padding:24px 28px;text-align:center}
+.confirm-icon{width:56px;height:56px;border-radius:50%;background:rgba(244,63,94,.1);border:2px solid rgba(244,63,94,.3);
+  display:flex;align-items:center;justify-content:center;margin:0 auto 16px;color:var(--rose)}
+.confirm-icon svg{width:24px;height:24px}
+.confirm-title{font-size:17px;font-weight:700;margin-bottom:8px}
+.confirm-desc{font-size:13px;color:var(--text-muted);line-height:1.6}
+
+/* Audio Player modal */
+.player-modal{max-width:560px}
+.player-body{padding:24px 28px;text-align:center}
+.player-art{width:100px;height:100px;border-radius:20px;background:linear-gradient(135deg,rgba(240,180,41,.15),rgba(99,102,241,.15));
+  border:1px solid var(--border);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;color:var(--gold)}
+.player-art svg{width:40px;height:40px}
+.player-title{font-family:var(--font-d);font-size:18px;font-weight:600;font-style:italic;margin-bottom:4px}
+.player-theme{font-size:12px;color:var(--text-muted)}
+.player-audio{width:100%;margin:20px 0;border-radius:var(--radius-md);accent-color:var(--gold)}
+.player-loading{color:var(--text-muted);font-size:13px;padding:20px 0}
+.player-error{color:var(--rose);font-size:12px;padding:10px 0}
+
+/* ═══ FAVORIS PAGE ════════════════════════════════════════ */
+.fav-hero{
+  position:relative;border-radius:var(--radius-xl);overflow:hidden;
+  padding:36px 36px 32px;margin-bottom:32px;
+  background:linear-gradient(135deg,rgba(244,63,94,.12) 0%,rgba(139,92,246,.08) 50%,rgba(240,180,41,.06) 100%);
+  border:1px solid rgba(244,63,94,.2);
+}
+.fav-hero::before{
+  content:'';position:absolute;top:-60px;right:-40px;
+  width:220px;height:220px;border-radius:50%;
+  background:radial-gradient(circle,rgba(244,63,94,.15) 0%,transparent 70%);
+  pointer-events:none;
+}
+.fav-hero::after{
+  content:'';position:absolute;bottom:-40px;left:30%;
+  width:160px;height:160px;border-radius:50%;
+  background:radial-gradient(circle,rgba(139,92,246,.1) 0%,transparent 70%);
+  pointer-events:none;
+}
+.fav-hero-inner{position:relative;z-index:1;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.fav-hero-left{}
+.fav-hero-eyebrow{display:inline-flex;align-items:center;gap:7px;font-size:10px;font-weight:700;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--rose);margin-bottom:10px}
+.fav-hero-eyebrow svg{width:12px;height:12px}
+.fav-hero-title{font-family:var(--font-d);font-size:clamp(26px,3.5vw,38px);font-weight:600;
+  font-style:italic;line-height:1.15;color:var(--text-primary);margin-bottom:6px}
+.fav-hero-sub{font-size:13.5px;color:var(--text-muted);line-height:1.6}
+.fav-hero-stat{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  background:rgba(244,63,94,.1);border:1px solid rgba(244,63,94,.25);
+  border-radius:20px;padding:20px 28px;flex-shrink:0;text-align:center;
+}
+.fav-hero-count{font-family:var(--font-d);font-size:44px;font-weight:600;color:var(--rose);line-height:1}
+.fav-hero-count-label{font-size:10.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;
+  color:rgba(244,63,94,.7);margin-top:4px}
+
+/* Toolbar */
+.fav-toolbar{display:flex;align-items:center;gap:12px;margin-bottom:20px;flex-wrap:wrap}
+.fav-sort-btn{display:inline-flex;align-items:center;gap:6px;padding:9px 14px;border-radius:var(--radius-md);
+  border:1px solid var(--border);background:rgba(255,255,255,.03);color:var(--text-secondary);
+  font-size:12px;font-weight:500;cursor:pointer;transition:all var(--t)}
+.fav-sort-btn:hover,.fav-sort-btn.active{border-color:rgba(244,63,94,.3);background:rgba(244,63,94,.06);color:var(--rose)}
+.fav-sort-btn svg{width:13px;height:13px}
+
+/* Favoris cards — distinct rose-accented style */
+.fav-list{display:flex;flex-direction:column;gap:10px}
+.fav-card{
+  background:var(--bg-surface);border:1px solid var(--border);
+  border-radius:var(--radius-lg);display:flex;align-items:center;
+  overflow:hidden;transition:all var(--t);position:relative;
+}
+.fav-card::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;width:3px;
+  background:linear-gradient(180deg,var(--rose),var(--violet));
+  opacity:0;transition:opacity var(--t);
+}
+.fav-card:hover{border-color:rgba(244,63,94,.2);box-shadow:0 8px 28px rgba(244,63,94,.08);transform:translateX(4px)}
+.fav-card:hover::before{opacity:1}
+.fav-card.removing{ animation:favRemove .35s cubic-bezier(.4,0,1,1) forwards; }
+@keyframes favRemove{
+  0%{opacity:1;transform:translateX(0) scale(1)}
+  40%{transform:translateX(8px) scale(1.01)}
+  100%{opacity:0;transform:translateX(40px) scale(.95);max-height:0;padding:0;margin:0}
+}
+.fav-card.adding{animation:favAdd .4s cubic-bezier(.34,1.56,.64,1) both}
+@keyframes favAdd{from{opacity:0;transform:scale(.95) translateY(12px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.fav-card-rank{
+  width:48px;display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  align-self:stretch;border-right:1px solid var(--border);
+  background:rgba(255,255,255,.01);
+}
+.fav-rank-num{
+  font-family:var(--font-d);font-size:18px;font-weight:600;color:var(--text-disabled);
+  line-height:1;
+}
+.fav-card-play{
+  width:60px;display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;padding:16px 0;
+}
+.fav-play-btn{
+  width:38px;height:38px;border-radius:50%;
+  background:rgba(244,63,94,.1);border:1.5px solid rgba(244,63,94,.3);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;color:var(--rose);transition:all var(--t);
+}
+.fav-play-btn:hover{background:var(--rose);color:#fff;box-shadow:0 0 20px rgba(244,63,94,.45);transform:scale(1.1)}
+.fav-play-btn.no-audio{color:var(--text-disabled);border-color:var(--border);background:rgba(255,255,255,.02);cursor:default}
+.fav-play-btn.no-audio:hover{transform:none;box-shadow:none;background:rgba(255,255,255,.02);color:var(--text-disabled)}
+.fav-play-btn svg{width:13px;height:13px;margin-left:2px}
+.fav-card-body{flex:1;padding:14px 16px;min-width:0}
+.fav-card-meta{display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap}
+.fav-theme-chip{font-size:9.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;
+  padding:2.5px 9px;border-radius:20px}
+.fav-card-date{font-size:11px;color:var(--text-muted);display:flex;align-items:center;gap:3px}
+.fav-card-date svg{width:10px;height:10px}
+.fav-card-title{font-size:14px;font-weight:600;color:var(--text-primary);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:6px;line-height:1.4}
+.fav-card-info{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.fav-info-item{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--text-muted)}
+.fav-info-item svg{width:11px;height:11px}
+.fav-info-item.audio-badge{color:var(--emerald)}
+.fav-card-actions{display:flex;align-items:center;gap:6px;padding:12px 14px;flex-shrink:0}
+.fav-heart-btn{
+  width:36px;height:36px;border-radius:50%;
+  background:rgba(244,63,94,.1);border:1.5px solid rgba(244,63,94,.3);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  color:var(--rose);transition:all var(--t);
+}
+.fav-heart-btn:hover{background:rgba(244,63,94,.2);transform:scale(1.1)}
+.fav-heart-btn:active{transform:scale(.9)}
+.fav-heart-btn svg{width:15px;height:15px}
+@keyframes heartBurst{
+  0%{transform:scale(1)}
+  30%{transform:scale(1.5)}
+  60%{transform:scale(.85)}
+  100%{transform:scale(1)}
+}
+.fav-heart-btn.burst svg{animation:heartBurst .35s cubic-bezier(.34,1.56,.64,1)}
+.fav-menu-btn{
+  width:36px;height:36px;border-radius:50%;
+  background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;color:var(--text-muted);transition:all var(--t);position:relative;
+}
+.fav-menu-btn:hover{background:rgba(255,255,255,.15);color:var(--text-primary);border-color:rgba(255,255,255,.3)}
+.fav-menu-btn svg{width:14px;height:14px}
+.fav-empty{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  min-height:52vh;text-align:center;gap:0;
+  padding:48px 24px;
+}
+.fav-empty-illustration{
+  position:relative;width:120px;height:120px;margin:0 auto 28px;
+}
+.fav-empty-circle{
+  width:120px;height:120px;border-radius:50%;
+  background:radial-gradient(circle,rgba(244,63,94,.12) 0%,rgba(244,63,94,.04) 60%,transparent 100%);
+  border:1px solid rgba(244,63,94,.15);
+  display:flex;align-items:center;justify-content:center;
+  animation:emptyPulse 3s ease-in-out infinite;
+}
+@keyframes emptyPulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(244,63,94,.15)}
+  50%{box-shadow:0 0 0 20px rgba(244,63,94,0)}
+}
+.fav-empty-circle svg{width:48px;height:48px;color:rgba(244,63,94,.4)}
+.fav-empty-hearts{position:absolute;inset:0;pointer-events:none}
+.fav-empty-hearts span{
+  position:absolute;font-size:14px;opacity:.3;
+  animation:floatHeart 4s ease-in-out infinite;
+}
+.fav-empty-hearts span:nth-child(1){top:0;left:10%;animation-delay:0s}
+.fav-empty-hearts span:nth-child(2){top:15%;right:5%;animation-delay:.8s;font-size:10px}
+.fav-empty-hearts span:nth-child(3){bottom:10%;left:0%;animation-delay:1.6s;font-size:12px}
+.fav-empty-hearts span:nth-child(4){bottom:5%;right:10%;animation-delay:2.4s}
+@keyframes floatHeart{
+  0%,100%{transform:translateY(0) rotate(-10deg);opacity:.25}
+  50%{transform:translateY(-10px) rotate(10deg);opacity:.5}
+}
+.fav-empty-title{font-family:var(--font-d);font-size:22px;font-weight:600;font-style:italic;
+  color:var(--text-primary);margin-bottom:10px}
+.fav-empty-desc{font-size:13.5px;color:var(--text-muted);max-width:320px;line-height:1.7;margin-bottom:28px}
+.btn-fav-empty{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(244,63,94,.1);border:1.5px solid rgba(244,63,94,.3);
+  color:var(--rose);font-size:13px;font-weight:600;padding:12px 24px;
+  border-radius:var(--radius-md);cursor:pointer;transition:all var(--t);
+}
+.btn-fav-empty:hover{background:rgba(244,63,94,.18);transform:translateY(-2px);box-shadow:0 8px 24px rgba(244,63,94,.2)}
+.btn-fav-empty svg{width:15px;height:15px}
+@media(max-width:768px){
+  .fav-hero{padding:24px 20px 20px}
+  .fav-hero-title{font-size:26px}
+  .fav-hero-inner{flex-direction:column;align-items:flex-start}
+  .fav-hero-stat{flex-direction:row;gap:12px;padding:14px 18px;align-self:stretch;justify-content:center}
+  .fav-card-rank{display:none}
+}
+@media(max-width:480px){
+  .fav-card-actions{padding:10px 10px}
+  .fav-card-play{width:52px}
+}
+.toast-container{position:fixed;bottom:24px;right:24px;z-index:999;display:flex;flex-direction:column;gap:10px;pointer-events:none}
+.toast{background:var(--bg-elevated);border:1px solid var(--border);border-radius:var(--radius-md);
+  padding:14px 18px;font-size:13px;color:var(--text-primary);box-shadow:var(--shadow-lg);
+  display:flex;align-items:center;gap:10px;transform:translateX(110%);
+  transition:transform .3s cubic-bezier(.34,1.56,.64,1);pointer-events:auto;max-width:320px}
+.toast.show{transform:translateX(0)}
+#page-theme-detail .page-header-left .btn-ghost { margin-bottom: 10px; }
+.theme-stat { display: flex; align-items: center; gap: 6px; font-size: 11.5px; color: var(--text-muted); }
+.ens-detail-container { display: flex; flex-direction: column; gap: 24px; }
+.detail-section { background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 20px; }
+.detail-section .section-title { margin-bottom: 16px; }
+.docs-list { display: flex; flex-direction: column; gap: 10px; }
+.doc-item { display: flex; align-items: center; gap: 12px; padding: 10px 14px; background: rgba(255,255,255,.02); border: 1px solid var(--border); border-radius: var(--radius-md); cursor: pointer; }
+.doc-item:hover { background: rgba(255,255,255,.04); }
+.doc-icon { width: 32px; height: 32px; border-radius: 8px; background: rgba(56,189,248,.1); color: var(--sky); display: flex; align-items: center; justify-content: center; }
+.doc-icon svg { width: 16px; height: 16px; }
+.doc-name { flex: 1; font-size: 13px; font-weight: 500; color: var(--text-primary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.doc-open-btn { padding: 6px 12px; background: rgba(255,255,255,.05); border: 1px solid var(--border); border-radius: var(--radius-sm); color: var(--text-secondary); font-size: 11px; font-weight: 600; text-decoration: none; transition: all var(--t); }
+.doc-open-btn:hover { background: rgba(255,255,255,.1); color: var(--text-primary); }
+.notes-card { background: rgba(255,255,255,.02); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 16px; font-size: 13.5px; line-height: 1.7; color: var(--text-secondary); white-space: pre-wrap; }
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes fadeInDown{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slideUp{from{opacity:0;transform:translateY(24px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.animate-in{animation:fadeInUp .5s cubic-bezier(.4,0,.2,1) both}
+.delay-1{animation-delay:.05s}.delay-2{animation-delay:.1s}.delay-3{animation-delay:.15s}
+.delay-4{animation-delay:.2s}.delay-5{animation-delay:.25s}
+@media(max-width:1280px){.stats-grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:1024px){.stats-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:768px){
+  #sidebar{transform:translateX(-100%);box-shadow:none}
+  #sidebar.open{transform:translateX(0);box-shadow:var(--shadow-lg)}
+  .sidebar-overlay.open{display:block;opacity:1}
+  #main{margin-left:0}
+  .menu-btn{display:flex}
+  .content{padding:20px 16px}
+  .stats-grid{grid-template-columns:repeat(2,1fr);gap:10px}
+  .dash-header{flex-direction:column;align-items:flex-start}
+  .teaching-num{display:none}
+  .topbar{padding:0 16px}
+  .themes-grid{grid-template-columns:1fr}
+  .form-row{grid-template-columns:1fr}
+  .modal{max-width:100%;margin:0;border-radius:var(--radius-lg) var(--radius-lg) 0 0;
+    position:fixed;bottom:0;left:0;right:0;max-height:92vh}
+  .modal-overlay{align-items:flex-end;padding:0}
+  .fab{bottom:20px;right:20px;width:52px;height:52px}
+}
+@media(max-width:480px){
+  .stats-grid{grid-template-columns:1fr 1fr}
+  .ens-card-actions{padding:10px 10px}
+  .page-header{flex-direction:column;align-items:flex-start}
+}
+/* ═══ HISTORY LIST (onglet Thèmes → détail lecture seule) ══════════════════ */
+.hist-list{display:flex;flex-direction:column;gap:0}
+.hist-item{display:flex;align-items:flex-start;gap:0;position:relative;padding:0}
+/* Ligne verticale de connexion entre items */
+.hist-item:not(:last-child)::after{
+  content:'';position:absolute;left:31px;top:48px;bottom:0;width:1px;
+  background:var(--border);z-index:0}
+.hist-item-num{
+  width:64px;flex-shrink:0;padding:18px 0 18px 0;
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  font-family:var(--font-d);font-size:15px;font-weight:600;line-height:1;
+  border-right:1px solid var(--border);position:relative;z-index:1;
+}
+.hist-item-num::before{
+  content:'';width:8px;height:8px;border-radius:50%;
+  background:currentColor;opacity:.6;margin-bottom:2px;
+}
+.hist-item-body{
+  flex:1;padding:16px 20px;min-width:0;
+  border-bottom:1px solid var(--border);
+}
+.hist-item:last-child .hist-item-body{border-bottom:none}
+.hist-item-title{
+  font-size:14px;font-weight:600;color:var(--text-primary);
+  line-height:1.4;margin-bottom:8px;
+}
+.hist-item-meta{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.hist-meta-chip{
+  display:inline-flex;align-items:center;gap:4px;
+  font-size:11px;color:var(--text-muted);
+}
+.hist-meta-chip svg{width:11px;height:11px;flex-shrink:0}
+.hist-badge-audio{
+  display:inline-flex;align-items:center;gap:4px;
+  font-size:10.5px;font-weight:600;letter-spacing:.04em;
+  color:var(--emerald);background:rgba(16,185,129,.08);
+  border:1px solid rgba(16,185,129,.2);border-radius:20px;
+  padding:2px 8px;
+}
+.hist-badge-audio svg{width:11px;height:11px;flex-shrink:0}
+.hist-item-line{display:none}
+@media(max-width:480px){
+  .hist-item-num{width:48px;font-size:13px}
+  .hist-item:not(:last-child)::after{left:23px}
+}
+/* ═══ ROLE-BASED VISIBILITY ════════════════════════════════ */
+body.user-mode .admin-only { display: none !important; }
+
+/* ═══ LOGIN PAGE ═══════════════════════════════════════════ */
+#login-page {
+  position: fixed; inset: 0; z-index: 2000;
+  background: var(--bg-void);
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px;
+}
+#login-page::before {
+  content: '';
+  position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(240,180,41,.07) 0%, transparent 70%),
+              radial-gradient(ellipse 60% 50% at 80% 100%, rgba(99,102,241,.06) 0%, transparent 70%);
+}
+.login-card {
+  position: relative; z-index: 1;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-hover);
+  border-radius: var(--radius-xl);
+  padding: 44px 40px 40px;
+  width: 100%; max-width: 420px;
+  box-shadow: var(--shadow-lg), 0 0 0 1px rgba(240,180,41,.04);
+  animation: slideUp .35s cubic-bezier(.34,1.56,.64,1);
+}
+.login-logo {
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 32px;
+}
+.login-logo-icon {
+  width: 44px; height: 44px;
+  background: linear-gradient(135deg, var(--gold), var(--gold-dim));
+  border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 16px rgba(240,180,41,.3);
+  flex-shrink: 0;
+}
+.login-logo-icon svg { width: 24px; height: 24px; }
+.login-logo-text {}
+.login-logo-name {
+  font-family: var(--font-d); font-size: 18px; font-weight: 600;
+  color: var(--text-primary); letter-spacing: .02em; display: block;
+}
+.login-logo-sub {
+  font-size: 10.5px; color: var(--text-muted);
+  letter-spacing: .08em; text-transform: uppercase;
+}
+.login-eyebrow {
+  font-size: 10px; font-weight: 700; letter-spacing: .14em;
+  text-transform: uppercase; color: var(--gold); margin-bottom: 8px;
+}
+.login-title {
+  font-family: var(--font-d); font-size: 26px; font-weight: 600;
+  font-style: italic; color: var(--text-primary); line-height: 1.2;
+  margin-bottom: 6px;
+}
+.login-sub {
+  font-size: 13px; color: var(--text-muted); line-height: 1.6;
+  margin-bottom: 28px;
+}
+.login-form-group { margin-bottom: 16px; }
+.login-label {
+  display: block; font-size: 11px; font-weight: 600;
+  letter-spacing: .06em; text-transform: uppercase;
+  color: var(--text-muted); margin-bottom: 8px;
+}
+.login-input {
+  width: 100%; background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 13px 16px;
+  font-family: var(--font); font-size: 14px;
+  color: var(--text-primary); outline: none;
+  transition: all var(--t);
+}
+.login-input:focus {
+  border-color: rgba(240,180,41,.5);
+  box-shadow: 0 0 0 3px rgba(240,180,41,.1);
+}
+.login-input::placeholder { color: var(--text-disabled); }
+.login-input.error { border-color: rgba(244,63,94,.5); box-shadow: 0 0 0 3px rgba(244,63,94,.1); }
+.login-error {
+  font-size: 12px; color: var(--rose);
+  margin-top: 6px; display: none; align-items: center; gap: 5px;
+}
+.login-error.show { display: flex; }
+.login-error svg { width: 13px; height: 13px; flex-shrink: 0; }
+.login-btn {
+  width: 100%; margin-top: 8px;
+  background: linear-gradient(135deg, var(--gold), var(--gold-dim));
+  color: var(--bg-void); font-family: var(--font);
+  font-size: 14px; font-weight: 700; letter-spacing: .03em;
+  padding: 14px; border: none; border-radius: var(--radius-md);
+  cursor: pointer; transition: all var(--t);
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.login-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(240,180,41,.4); }
+.login-btn:active { transform: translateY(0); }
+.login-btn:disabled { opacity: .6; pointer-events: none; }
+.login-btn svg { width: 16px; height: 16px; }
+@media(max-width:480px) {
+  .login-card { padding: 32px 24px 28px; }
+  .login-title { font-size: 22px; }
+}
+
+/* ═══ BOTTOM NAVIGATION MOBILE ══════════════════════════════════════════ */
+.bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;z-index:100;
+  background:rgba(9,14,27,.97);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+  border-top:1px solid rgba(255,255,255,.07);padding-bottom:env(safe-area-inset-bottom)}
+.bottom-nav-inner{display:flex;height:62px}
+.bottom-nav-item{flex:1;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:4px;cursor:pointer;color:var(--text-muted);
+  transition:color var(--t);position:relative;padding:8px 4px 6px;
+  border:none;background:none;-webkit-tap-highlight-color:transparent;outline:none}
+.bottom-nav-item::after{content:'';position:absolute;top:0;left:50%;
+  transform:translateX(-50%);width:0;height:3px;
+  background:linear-gradient(90deg,var(--gold),var(--gold-dim));
+  border-radius:0 0 4px 4px;transition:width var(--t)}
+.bottom-nav-item.active{color:var(--gold)}
+.bottom-nav-item.active::after{width:28px}
+.bottom-nav-item:active{transform:scale(.9)}
+.bottom-nav-icon{width:24px;height:24px;display:flex;align-items:center;justify-content:center;position:relative}
+.bottom-nav-icon svg{width:22px;height:22px}
+.bottom-nav-label{font-size:9px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;white-space:nowrap}
+.bottom-nav-badge{position:absolute;top:-4px;right:-8px;background:var(--gold);color:var(--bg-void);
+  font-size:8px;font-weight:800;min-width:15px;padding:1px 3px;border-radius:10px;
+  text-align:center;line-height:1.5;border:1.5px solid var(--bg-void);display:none}
+/* ═══ BOUTON DÉCONNEXION ═════════════════════════════════════════════════ */
+.logout-btn{display:flex;align-items:center;gap:8px;width:100%;margin-top:10px;
+  padding:9px 12px;background:rgba(244,63,94,.06);border:1px solid rgba(244,63,94,.2);
+  border-radius:var(--radius-md);color:var(--rose);font-family:var(--font);
+  font-size:12px;font-weight:600;cursor:pointer;transition:all var(--t)}
+.logout-btn:hover{background:rgba(244,63,94,.14)}
+.logout-btn svg{width:14px;height:14px;flex-shrink:0}
+/* ═══ RESPONSIVE ═════════════════════════════════════════════════════════ */
+@media(max-width:768px){
+  .bottom-nav{display:block}
+  #main{padding-bottom:calc(62px + env(safe-area-inset-bottom))}
+  .fab{bottom:calc(76px + env(safe-area-inset-bottom));right:16px}
+  .menu-btn{display:none!important}
+  .topbar{padding:0 16px;height:56px}
+  .page-breadcrumb>span:first-child,.breadcrumb-sep{display:none}
+  .page-title-bar{font-size:15px;font-weight:700}
+  .topbar-logout{display:flex!important}
+  .logout-btn{display:none}
+}
+@media(min-width:769px){
+  .bottom-nav{display:none!important}
+  .topbar-logout{display:none!important}
+  .logout-btn{display:flex}
+}
+</style>
+<body>
+
+<!-- ════════ PAGE DE CONNEXION ════════ -->
+<div id="login-page">
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="login-logo-icon">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 3C7.029 3 3 7.029 3 12v5a2 2 0 002 2h1a2 2 0 002-2v-3a2 2 0 00-2-2H5v-1a7 7 0 0114 0v1h-1a2 2 0 00-2 2v3a2 2 0 002 2h1a2 2 0 002-2v-5c0-4.971-4.029-9-9-9z" fill="rgba(8,12,20,.85)"/>
+        </svg>
+      </div>
+      <div class="login-logo-text">
+        <span class="login-logo-name">Enseignements</span>
+        <span class="login-logo-sub">Bibliothèque Audio</span>
+      </div>
+    </div>
+    <div class="login-eyebrow">Accès sécurisé</div>
+    <div class="login-title">Bienvenue ✦</div>
+    <p class="login-sub">Entrez votre adresse e-mail pour accéder à la bibliothèque.</p>
+    <div class="login-form-group">
+      <label class="login-label" for="login-email">Adresse e-mail</label>
+      <input
+        class="login-input"
+        type="email"
+        id="login-email"
+        placeholder="votre@email.com"
+        autocomplete="email"
+        onkeydown="if(event.key==='Enter') handleLogin()"
+      />
+      <div class="login-error" id="login-error">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <span id="login-error-msg">Veuillez entrer une adresse e-mail valide.</span>
+      </div>
+    </div>
+    <button class="login-btn" id="login-btn" onclick="handleLogin()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+      Accéder à l'application
+    </button>
+  </div>
+</div>
+
+<div id="app" style="display:none">
+
+<!-- ════════ SIDEBAR ════════ -->
+<aside id="sidebar">
+  <div class="sidebar-header">
+    <a class="logo-wrapper" href="#" onclick="return false">
+      <div class="logo-icon">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 3C7.029 3 3 7.029 3 12v5a2 2 0 002 2h1a2 2 0 002-2v-3a2 2 0 00-2-2H5v-1a7 7 0 0114 0v1h-1a2 2 0 00-2 2v3a2 2 0 002 2h1a2 2 0 002-2v-5c0-4.971-4.029-9-9-9z" fill="rgba(8,12,20,.85)"/>
+        </svg>
+      </div>
+      <div class="logo-text">
+        <span class="logo-name">Enseignements</span>
+        <span class="logo-tagline">Bibliothèque Audio</span>
+      </div>
+    </a>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section-label">Navigation</div>
+    <a class="nav-item active" data-page="dashboard" onclick="navigate('dashboard');return false" href="#">
+      <div class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></div>
+      <span class="nav-label">Dashboard</span>
+    </a>
+    <a class="nav-item" data-page="themes" onclick="navigate('themes');return false" href="#">
+      <div class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg></div>
+      <span class="nav-label">Thèmes</span>
+      <span class="nav-badge" id="badge-themes">—</span>
+    </a>
+    <a class="nav-item" data-page="enseignements" onclick="navigate('enseignements');return false" href="#">
+      <div class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg></div>
+      <span class="nav-label">Enseignements</span>
+      <span class="nav-badge" id="badge-ens">—</span>
+    </a>
+    <a class="nav-item" data-page="favoris" onclick="navigate('favoris');return false" href="#">
+      <div class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></div>
+      <span class="nav-label">Favoris</span>
+      <span class="nav-badge" id="fav-badge">—</span>
+    </a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="sidebar-user">
+      <div class="avatar" id="sidebar-avatar">?</div>
+      <div class="user-info">
+        <div class="user-name" id="sidebar-username">—</div>
+        <div class="user-role" id="sidebar-role">Connexion en cours…</div>
+      </div>
+    </div>
+    <button class="logout-btn" onclick="logout()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      Se déconnecter
+    </button>
+  </div>
+</aside>
+<div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
+
+<!-- ════════ MAIN ════════ -->
+<main id="main">
+  <header class="topbar">
+    <div class="topbar-left">
+      <button class="menu-btn" onclick="toggleSidebar()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+      <div class="page-breadcrumb">
+        <span>Enseignements</span>
+        <span class="breadcrumb-sep">›</span>
+        <span class="page-title-bar" id="topbar-title">Dashboard</span>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <button class="topbar-btn" onclick="refreshCurrentPage()" title="Actualiser">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
+      </button>
+      <button class="topbar-btn" title="Notifications">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"/></svg>
+        <span class="topbar-badge"></span>
+      </button>
+      <button class="topbar-btn topbar-logout" onclick="logout()" title="Se déconnecter" style="display:none;color:var(--rose);border-color:rgba(244,63,94,.25)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <div class="content">
+
+    <!-- ═══ DASHBOARD PAGE ═══ -->
+    <div class="page active" id="page-dashboard">
+      <div class="dash-header animate-in">
+        <div>
+          <div class="dash-greeting-label">Vue d'ensemble</div>
+          <h1 class="dash-title">Bonjour, Administrateur ✦</h1>
+          <p class="dash-subtitle">Voici l'état de votre bibliothèque d'enseignements.</p>
+        </div>
+        <div class="dash-date-pill">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          <span id="current-date">—</span>
+        </div>
+      </div>
+      <div class="stats-grid" id="stats-grid">
+        <div class="stat-card animate-in delay-1" id="stat-enseignements" style="opacity:.6">
+          <div class="stat-icon" style="background:rgba(240,180,41,.1);color:var(--gold)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg></div>
+          <div class="stat-value" style="color:var(--gold)">—</div><div class="stat-label">Enseignements</div>
+        </div>
+        <div class="stat-card animate-in delay-2" id="stat-themes" style="opacity:.6">
+          <div class="stat-icon" style="background:rgba(99,102,241,.1);color:var(--indigo)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg></div>
+          <div class="stat-value" style="color:var(--indigo)">—</div><div class="stat-label">Thèmes</div>
+        </div>
+        <div class="stat-card animate-in delay-3" id="stat-audios" style="opacity:.6">
+          <div class="stat-icon" style="background:rgba(16,185,129,.1);color:var(--emerald)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></div>
+          <div class="stat-value" style="color:var(--emerald)">—</div><div class="stat-label">Audios</div>
+        </div>
+        <div class="stat-card animate-in delay-4" id="stat-documents" style="opacity:.6">
+          <div class="stat-icon" style="background:rgba(56,189,248,.1);color:var(--sky)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+          <div class="stat-value" style="color:var(--sky)">—</div><div class="stat-label">Documents</div>
+        </div>
+        <div class="stat-card animate-in delay-5" id="stat-favoris" style="opacity:.6">
+          <div class="stat-icon" style="background:rgba(244,63,94,.1);color:var(--rose)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></div>
+          <div class="stat-value" style="color:var(--rose)">—</div><div class="stat-label">Favoris</div>
+        </div>
+      </div>
+      <div>
+        <div class="section-header animate-in">
+          <div class="section-title"><span class="section-dot"></span>Derniers Enseignements</div>
+          <div class="section-action" onclick="navigate('enseignements')">Voir tout <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg></div>
+        </div>
+        <div class="teachings-grid" id="teachings-list">
+          <div class="loading-card animate-in delay-1"><div class="skeleton" style="width:52px;height:52px;border-radius:12px;flex-shrink:0"></div><div style="flex:1"><div class="skeleton" style="width:60%;height:12px;margin-bottom:10px"></div><div class="skeleton" style="width:85%;height:16px;margin-bottom:8px"></div><div class="skeleton" style="width:40%;height:11px"></div></div></div>
+          <div class="loading-card animate-in delay-2"><div class="skeleton" style="width:52px;height:52px;border-radius:12px;flex-shrink:0"></div><div style="flex:1"><div class="skeleton" style="width:50%;height:12px;margin-bottom:10px"></div><div class="skeleton" style="width:90%;height:16px;margin-bottom:8px"></div><div class="skeleton" style="width:35%;height:11px"></div></div></div>
+          <div class="loading-card animate-in delay-3"><div class="skeleton" style="width:52px;height:52px;border-radius:12px;flex-shrink:0"></div><div style="flex:1"><div class="skeleton" style="width:45%;height:12px;margin-bottom:10px"></div><div class="skeleton" style="width:75%;height:16px;margin-bottom:8px"></div><div class="skeleton" style="width:30%;height:11px"></div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ THEMES PAGE ═══ -->
+    <div class="page" id="page-themes">
+      <div class="page-header">
+        <div class="page-header-left">
+          <div class="page-header-label">Gestion</div>
+          <h2 class="page-header-title">Thèmes ✦</h2>
+          <p class="page-header-sub">Organisez vos enseignements par thématiques.</p>
+        </div>
+        <button class="btn-primary admin-only" onclick="openThemeModal()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Nouveau thème
+        </button>
+      </div>
+      <div class="themes-grid" id="themes-grid">
+        <div class="loading-card"><div class="skeleton" style="width:44px;height:44px;border-radius:14px;flex-shrink:0"></div><div style="flex:1"><div class="skeleton" style="width:55%;height:16px;margin-bottom:10px"></div><div class="skeleton" style="width:80%;height:12px;margin-bottom:6px"></div><div class="skeleton" style="width:40%;height:11px"></div></div></div>
+        <div class="loading-card"><div class="skeleton" style="width:44px;height:44px;border-radius:14px;flex-shrink:0"></div><div style="flex:1"><div class="skeleton" style="width:45%;height:16px;margin-bottom:10px"></div><div class="skeleton" style="width:75%;height:12px;margin-bottom:6px"></div><div class="skeleton" style="width:35%;height:11px"></div></div></div>
+      </div>
+    </div>
+
+    <!-- ═══ ENSEIGNEMENTS PAGE (affichage des thèmes) ═══ -->
+    <div class="page" id="page-enseignements">
+      <div class="page-header">
+        <div class="page-header-left">
+          <div class="page-header-label">Bibliothèque</div>
+          <h2 class="page-header-title">Enseignements ✦</h2>
+          <p class="page-header-sub">Explorez par thèmes.</p>
+        </div>
+        <button class="btn-primary admin-only" onclick="openEnsModal()" id="btn-add-ens">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Ajouter
+        </button>
+      </div>
+      <div class="themes-grid" id="themes-grid-ens">
+        <!-- Skeletons -->
+        <div class="loading-card"><div class="skeleton" style="width:44px;height:44px;border-radius:14px;flex-shrink:0"></div><div style="flex:1"><div class="skeleton" style="width:55%;height:16px;margin-bottom:10px"></div><div class="skeleton" style="width:80%;height:12px;margin-bottom:6px"></div><div class="skeleton" style="width:40%;height:11px"></div></div></div>
+        <div class="loading-card"><div class="skeleton" style="width:44px;height:44px;border-radius:14px;flex-shrink:0"></div><div style="flex:1"><div class="skeleton" style="width:45%;height:16px;margin-bottom:10px"></div><div class="skeleton" style="width:75%;height:12px;margin-bottom:6px"></div><div class="skeleton" style="width:35%;height:11px"></div></div></div>
+      </div>
+    </div>
+
+    <!-- ═══ PAGE DÉTAIL THÈME ═══ -->
+    <div class="page" id="page-theme-detail">
+      <div class="page-header">
+        <div class="page-header-left">
+          <button class="btn-ghost" id="theme-detail-back-btn" onclick="navigate('enseignements')" style="margin-bottom: 10px;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            <span class="back-btn-label">Retour aux thèmes</span>
+          </button>
+          <div class="page-header-label" id="theme-detail-label">Thème</div>
+          <h2 class="page-header-title" id="theme-detail-title">—</h2>
+          <p class="page-header-sub" id="theme-detail-desc">—</p>
+          <div class="theme-stat" id="theme-detail-count" style="margin-top: 8px;">0 enseignement</div>
+        </div>
+      </div>
+      <div class="ens-list" id="theme-enseignements-list">
+        <!-- Skeletons will be inserted by JS -->
+      </div>
+    </div>
+
+    <!-- ═══ PAGE DÉTAIL ENSEIGNEMENT ═══ -->
+    <div class="page" id="page-enseignement-detail">
+      <div class="page-header">
+        <div class="page-header-left">
+          <button class="btn-ghost" onclick="goBackToTheme()" style="margin-bottom: 10px;" id="back-to-theme-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            Retour
+          </button>
+          <div class="page-header-label" id="ens-detail-label">Enseignement</div>
+          <h2 class="page-header-title" id="ens-detail-title">—</h2>
+          <p class="page-header-sub" id="ens-detail-meta">—</p>
+        </div>
+      </div>
+      <div class="ens-detail-container">
+        <!-- Audio player -->
+        <div class="detail-section">
+          <h3 class="section-title"><span class="section-dot"></span>Audio</h3>
+          <div class="audio-list" id="detail-audio-list"></div>
+          <div class="audio-player-wrapper" id="audio-player-wrapper">
+            <!-- Hauteur 420px : affiche intégralement le player Drive OU la page d'avertissement
+                 antivirus (fichiers >25 MB) avec le bouton "Lancer quand même" visible. -->
+            <iframe id="detail-audio-player"
+              src=""
+              style="display:none;width:100%;height:420px;border:none;border-radius:8px;margin-top:10px;"
+              allow="autoplay; encrypted-media"
+              referrerpolicy="no-referrer-when-downgrade">
+            </iframe>
+            <div class="player-loading" id="detail-player-loading" style="display:none;">Chargement...</div>
+            <div class="player-error" id="detail-player-error" style="display:none; color:var(--rose);"></div>
+          </div>
+        </div>
+        <!-- Documents -->
+        <div class="detail-section">
+          <h3 class="section-title"><span class="section-dot"></span>Documents</h3>
+          <div class="docs-list" id="detail-docs-list">
+            <p class="empty-desc">Aucun document.</p>
+          </div>
+        </div>
+        <!-- Notes -->
+        <div class="detail-section">
+          <h3 class="section-title"><span class="section-dot"></span>Notes</h3>
+          <div class="notes-card" id="detail-notes">
+            <p class="empty-desc">Aucune note.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ FAVORIS PAGE ═══ -->
+    <div class="page" id="page-favoris">
+      <div class="fav-hero animate-in">
+        <div class="fav-hero-inner">
+          <div class="fav-hero-left">
+            <div class="fav-hero-eyebrow">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+              Votre collection
+            </div>
+            <div class="fav-hero-title">Mes Favoris ✦</div>
+            <div class="fav-hero-sub">Les enseignements qui ont marqué votre cœur.</div>
+          </div>
+          <div class="fav-hero-stat">
+            <div class="fav-hero-count" id="fav-hero-count">—</div>
+            <div class="fav-hero-count-label">Favoris</div>
+          </div>
+        </div>
+      </div>
+      <div class="fav-toolbar animate-in">
+        <button class="fav-sort-btn active" id="fav-sort-date" onclick="sortFavoris('date')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          Par date
+        </button>
+        <button class="fav-sort-btn" id="fav-sort-theme" onclick="sortFavoris('theme')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3"/></svg>
+          Par thème
+        </button>
+        <button class="fav-sort-btn" id="fav-sort-ecoutes" onclick="sortFavoris('ecoutes')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 18v-6a9 9 0 0118 0v6"/><path d="M21 19a2 2 0 01-2 2h-1a2 2 0 01-2-2v-3a2 2 0 012-2h3zM3 19a2 2 0 002 2h1a2 2 0 002-2v-3a2 2 0 00-2-2H3z"/></svg>
+          Les plus écoutés
+        </button>
+      </div>
+      <div class="fav-list" id="fav-list">
+        <!-- Skeletons -->
+        <div class="loading-card animate-in delay-1"><div class="skeleton" style="width:38px;height:38px;border-radius:50%;flex-shrink:0"></div><div style="flex:1"><div class="skeleton" style="width:28%;height:10px;margin-bottom:9px"></div><div class="skeleton" style="width:65%;height:15px;margin-bottom:8px"></div><div class="skeleton" style="width:42%;height:10px"></div></div></div>
+        <div class="loading-card animate-in delay-2"><div class="skeleton" style="width:38px;height:38px;border-radius:50%;flex-shrink:0"></div><div style="flex:1"><div class="skeleton" style="width:22%;height:10px;margin-bottom:9px"></div><div class="skeleton" style="width:78%;height:15px;margin-bottom:8px"></div><div class="skeleton" style="width:35%;height:10px"></div></div></div>
+        <div class="loading-card animate-in delay-3"><div class="skeleton" style="width:38px;height:38px;border-radius:50%;flex-shrink:0"></div><div style="flex:1"><div class="skeleton" style="width:32%;height:10px;margin-bottom:9px"></div><div class="skeleton" style="width:55%;height:15px;margin-bottom:8px"></div><div class="skeleton" style="width:48%;height:10px"></div></div></div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</main>
+</div><!-- /app -->
+
+<!-- ════ BOTTOM NAVIGATION MOBILE ════ -->
+<nav class="bottom-nav" id="bottom-nav">
+  <div class="bottom-nav-inner">
+    <button class="bottom-nav-item active" data-page="dashboard" onclick="navigate('dashboard')">
+      <div class="bottom-nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></div>
+      <span class="bottom-nav-label">Dashboard</span>
+    </button>
+    <button class="bottom-nav-item" data-page="themes" onclick="navigate('themes')">
+      <div class="bottom-nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg>
+        <span class="bottom-nav-badge" id="bnav-badge-themes">0</span>
+      </div>
+      <span class="bottom-nav-label">Thèmes</span>
+    </button>
+    <button class="bottom-nav-item" data-page="enseignements" onclick="navigate('enseignements')">
+      <div class="bottom-nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg>
+        <span class="bottom-nav-badge" id="bnav-badge-ens">0</span>
+      </div>
+      <span class="bottom-nav-label">Enseign.</span>
+    </button>
+    <button class="bottom-nav-item" data-page="favoris" onclick="navigate('favoris')">
+      <div class="bottom-nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+        <span class="bottom-nav-badge" id="bnav-badge-fav">0</span>
+      </div>
+      <span class="bottom-nav-label">Favoris</span>
+    </button>
+  </div>
+</nav>
+
+<!-- FAB -->
+<button class="fab admin-only" id="fab-btn" onclick="openEnsModal()" title="Ajouter un enseignement">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+</button>
+
+<!-- ════════ MODAL: THÈME ════════ -->
+<div class="modal-overlay" id="modal-theme-overlay" onclick="closeThemeModal(event)">
+  <div class="modal" id="modal-theme" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <div class="modal-header-content">
+        <div class="modal-label" id="theme-modal-label">Nouveau thème</div>
+        <div class="modal-title" id="theme-modal-title">Créer un thème</div>
+      </div>
+      <button class="modal-close" onclick="closeThemeModal()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="theme-edit-id"/>
+      <div class="form-group">
+        <label class="form-label">Nom du thème *</label>
+        <input class="form-input" type="text" id="theme-nom" placeholder="Ex: Foi & Espérance" maxlength="60"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Description</label>
+        <textarea class="form-textarea" id="theme-desc" placeholder="Décrivez brièvement ce thème…" style="min-height:80px"></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Couleur du thème</label>
+        <div class="color-picker-group">
+          <div class="color-presets" id="color-presets"></div>
+          <div class="color-custom-row">
+            <input type="color" id="theme-color-picker" value="#6366F1" oninput="onCustomColor(this.value)"/>
+            <span class="color-preview-text">Ou choisissez une couleur personnalisée</span>
+          </div>
+        </div>
+        <input type="hidden" id="theme-couleur" value="#6366F1"/>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-ghost" onclick="closeThemeModal()">Annuler</button>
+      <button class="btn-primary" id="theme-save-btn" onclick="saveTheme()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="15" height="15"><polyline points="20 6 9 17 4 12"/></svg>
+        Enregistrer
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ MODAL: ENSEIGNEMENT (MODIFIÉ POUR UPLOAD DIRECT MULTIPLE) ════════ -->
+<div class="modal-overlay" id="modal-ens-overlay" onclick="closeEnsModal(event)">
+  <div class="modal modal-lg" id="modal-ens" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <div class="modal-header-content">
+        <div class="modal-label">Nouvel enseignement</div>
+        <div class="modal-title">Ajouter un enseignement</div>
+      </div>
+      <button class="modal-close" onclick="closeEnsModal()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Date *</label>
+          <input class="form-input" type="date" id="ens-date"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Thème *</label>
+          <select class="form-select" id="ens-theme">
+            <option value="">Sélectionner un thème…</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Titre de l'enseignement *</label>
+        <input class="form-input" type="text" id="ens-titre" placeholder="Ex: Marcher dans la foi au quotidien" maxlength="120"/>
+      </div>
+      <!-- Audio Upload (upload direct multiple) -->
+      <div class="form-group">
+        <label class="form-label">Fichiers audio (aucune limite de taille, plusieurs possibles)</label>
+        <div class="file-upload-zone" id="audio-zone" ondragover="onDragOver(event,'audio-zone')" ondragleave="onDragLeave('audio-zone')" ondrop="onDropAudio(event)">
+          <input type="file" id="audio-file" accept=".mp3,.m4a,.aac,.ogg,.oga,.opus,.wav,.wave,.flac,.aiff,.aif,.wma,.3gp,.3gpp,.amr,audio/mpeg,audio/mp3,audio/mp4,audio/m4a,audio/aac,audio/ogg,audio/opus,audio/wav,audio/wave,audio/x-wav,audio/flac,audio/aiff,audio/x-aiff,audio/webm,audio/3gpp,audio/amr,audio/x-ms-wma" multiple onchange="onAudioFilesSelected(this.files)"/>
+          <div class="file-upload-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></div>
+          <div class="file-upload-label">Cliquez ou glissez des fichiers audio</div>
+          <div class="file-upload-hint">MP3, M4A, AAC, OGG, OPUS, WAV, FLAC, AIFF, WMA — taille illimitée</div>
+        </div>
+        <div class="files-list" id="audio-files-list"></div>
+      </div>
+      <!-- Documents Upload (inchangé, reste en base64) -->
+      <div class="form-group">
+        <label class="form-label">Documents complémentaires</label>
+        <div class="file-upload-zone" id="docs-zone" ondragover="onDragOver(event,'docs-zone')" ondragleave="onDragLeave('docs-zone')" ondrop="onDrop(event,'docs')">
+          <input type="file" id="docs-files" accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx" multiple onchange="onFilesSelect(event)"/>
+          <div class="file-upload-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+          <div class="file-upload-label">Cliquez ou glissez des documents</div>
+          <div class="file-upload-hint">PDF, Word, PowerPoint, Excel — max 10 MB/fichier</div>
+        </div>
+        <div class="files-list" id="docs-list"></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Notes personnelles</label>
+        <textarea class="form-textarea" id="ens-notes" placeholder="Vos notes, références bibliques, points clés…"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-ghost" onclick="closeEnsModal()">Annuler</button>
+      <button class="btn-primary" id="ens-save-btn" onclick="saveEnseignement()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="15" height="15"><polyline points="20 6 9 17 4 12"/></svg>
+        Enregistrer
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ MODAL: CONFIRMATION ════════ -->
+<div class="modal-overlay" id="modal-confirm-overlay" onclick="closeConfirm()">
+  <div class="modal confirm-modal" onclick="event.stopPropagation()">
+    <div class="confirm-body">
+      <div class="confirm-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
+      </div>
+      <div class="confirm-title" id="confirm-title">Supprimer ?</div>
+      <div class="confirm-desc" id="confirm-desc">Cette action est irréversible.</div>
+    </div>
+    <div class="modal-footer" style="padding-top:0">
+      <button class="btn-ghost" onclick="closeConfirm()">Annuler</button>
+      <button class="btn-danger" id="confirm-ok-btn" onclick="executeConfirm()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
+        Supprimer
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ MODAL: AUDIO PLAYER ════════ -->
+<div class="modal-overlay" id="modal-player-overlay" onclick="closePlayer(event)">
+  <div class="modal player-modal" id="modal-player" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <div class="modal-header-content">
+        <div class="modal-label">Lecteur audio</div>
+        <div class="modal-title" id="player-title">—</div>
+      </div>
+      <button class="modal-close" onclick="closePlayer()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="player-body">
+      <div class="player-art"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></div>
+      <div class="player-loading" id="player-loading">Chargement de l'audio…</div>
+      <div class="player-error" id="player-error" style="display:none"></div>
+      <!-- iframe Drive /preview : contourne les CSP d'Apps Script qui bloquent <audio> cross-origin.
+           Hauteur 420px nécessaire pour afficher intégralement la page d'avertissement antivirus
+           Google Drive (fichiers >25 MB) avec son bouton "Lancer quand même" entièrement visible. -->
+      <iframe id="audio-player"
+        src=""
+        style="display:none;width:100%;height:420px;border:none;border-radius:8px;margin:16px 0;"
+        allow="autoplay; encrypted-media"
+        referrerpolicy="no-referrer-when-downgrade">
+      </iframe>
+    </div>
+  </div>
+</div>
+
+<div class="toast-container" id="toast-container"></div>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+//  ⚙️  Remplacez par votre URL Apps Script
+// ═══════════════════════════════════════════════════════════
+var GAS_URL = "https://script.google.com/macros/s/AKfycbykfT5pxhN2tHxLSphL6kpmHIaPEA3zgosxSpEE1dHjOgC2mwuuwSmzzmZmQrydtaP5MQ/exec";
+// ═══════════════════════════════════════════════════════════
+
+// ═══════════════════════════════════════════════════════════
+//  SHIM google.script.run → fetch GET
+//  Rend tout le code Apps Script compatible GitHub Pages
+//  sans modifier une seule ligne du code existant.
+// ═══════════════════════════════════════════════════════════
+(function () {
+  function gasCall(action, args, successCb, failureCb) {
+    if (!GAS_URL || GAS_URL === 'VOTRE_URL_APPS_SCRIPT_ICI') {
+      console.error('[GAS] GAS_URL non configurée');
+      if (typeof failureCb === 'function') failureCb(new Error('GAS_URL non configurée'));
+      return;
+    }
+    var url = GAS_URL
+      + '?action=' + encodeURIComponent(action)
+      + '&params=' + encodeURIComponent(JSON.stringify(args));
+
+    fetch(url, { method: 'GET', redirect: 'follow' })
+      .then(function(r) { return r.text(); })
+      .then(function(text) {
+        var start = text.indexOf('{');
+        var startArr = text.indexOf('[');
+        if (startArr !== -1 && (start === -1 || startArr < start)) start = startArr;
+        if (start === -1) {
+          if (typeof failureCb === 'function') failureCb(new Error('Réponse non-JSON'));
+          return;
+        }
+        try {
+          var result = JSON.parse(text.substring(start));
+          if (typeof successCb === 'function') successCb(result);
+        } catch(e) {
+          if (typeof failureCb === 'function') failureCb(new Error('Parse error'));
+        }
+      })
+      .catch(function(err) {
+        if (typeof failureCb === 'function') failureCb(err);
+      });
+  }
+
+  function createRunner(successCb, failureCb) {
+    var h = {
+      withSuccessHandler: function(cb) { return createRunner(cb, failureCb); },
+      withFailureHandler: function(cb) { return createRunner(successCb, cb); }
+    };
+    return new Proxy(h, {
+      get: function(target, prop) {
+        if (prop in target) return target[prop];
+        return function() {
+          gasCall(prop, Array.prototype.slice.call(arguments), successCb, failureCb);
+        };
+      }
+    });
+  }
+
+  window.google = { script: { run: createRunner(null, null) } };
+})();
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('/sw.js').catch(function(){});
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+//  APP STATE
+// ═══════════════════════════════════════════════════════════
+const S = {
+  page:           'dashboard',
+  themes:         [],
+  enseignements:  [],
+  filteredEns:    [],
+  favoriIds:      new Set(), // IDs favoris de l'utilisateur courant
+  audioFiles:     [],        // Tableau de fichiers audio sélectionnés (pour upload direct multiple)
+  docsData:       [],           // [{name,mimeType,data,size}] (documents en base64)
+  confirmCb:      null,
+  currentAudioId: null,
+  currentAudioEnsId: null,
+  themeColors: [
+    '#F59E0B','#EF4444','#EC4899','#8B5CF6','#6366F1',
+    '#3B82F6','#06B6D4','#10B981','#14B8A6','#84CC16','#F97316','#78716C'
+  ],
+  selectedColor: '#6366F1',
+  currentTheme: null,
+  themeDetailMode: 'full',  // 'full' (onglet Enseignements) | 'history' (onglet Thèmes)
+  currentEnsId: null,
+  favoris: [],
+  favSort: 'date',
+  favLoaded: false,
+  // ── Authentification ──
+  userEmail:  '',       // e-mail saisi par l'utilisateur
+  isAdmin:    false,    // true si mail = mail déployeur
+  loggedIn:   false     // true une fois la connexion validée
+};
+
+// ═══════════════════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', () => {
+  buildColorPresets();
+  try {
+    var _s = localStorage.getItem('ens_session_v1');
+    if (_s) {
+      var _sess = JSON.parse(_s);
+      if (_sess && _sess.email && _sess.loggedIn) { initApp(_sess.email, !!_sess.isAdmin, null); return; }
+    }
+  } catch(_e) { try { localStorage.removeItem('ens_session_v1'); } catch(_) {} }
+  setTimeout(() => document.getElementById('login-email').focus(), 150);
+});
+
+// ═══════════════════════════════════════════════════════════
+//  AUTHENTIFICATION
+// ═══════════════════════════════════════════════════════════
+function handleLogin() {
+  const emailInput = document.getElementById('login-email');
+  const errorDiv   = document.getElementById('login-error');
+  const errorMsg   = document.getElementById('login-error-msg');
+  const btn        = document.getElementById('login-btn');
+  const email      = emailInput.value.trim().toLowerCase();
+
+  // Validation basique du format e-mail
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!email || !emailRegex.test(email)) {
+    emailInput.classList.add('error');
+    errorMsg.textContent = 'Veuillez entrer une adresse e-mail valide.';
+    errorDiv.classList.add('show');
+    emailInput.focus();
+    return;
+  }
+
+  // Réinitialiser l'état d'erreur
+  emailInput.classList.remove('error');
+  errorDiv.classList.remove('show');
+
+  // Afficher le spinner pendant la vérification
+  btn.disabled = true;
+  btn.textContent = 'Vérification…';
+
+  // Un seul appel réseau : auth + dashboard en même temps
+  google.script.run
+    .withSuccessHandler(function(result) {
+      btn.disabled = false;
+      btn.textContent = 'Accéder à l\u2019application';
+
+      if (!result || !result.success) {
+        console.warn('Échec authenticateAndGetDashboard, accès utilisateur par défaut.', result);
+        initApp(email, false, null);
+        return;
+      }
+
+      const isAdmin = (result.role === 'admin');
+      // Passer les données dashboard déjà chargées → rendu immédiat, 0 aller-retour en plus
+      initApp(email, isAdmin, result.dashboard);
+    })
+    .withFailureHandler(function(err) {
+      btn.disabled = false;
+      btn.textContent = 'Accéder à l\u2019application';
+      errorMsg.textContent = 'Erreur de connexion. Réessayez.';
+      errorDiv.classList.add('show');
+      console.error('handleLogin failure:', err);
+    })
+    .authenticateAndGetDashboard(email);
+}
+
+function initApp(email, isAdmin, dashboardData) {
+  // Mémoriser le profil
+  S.userEmail = email;
+  S.isAdmin   = isAdmin;
+  S.loggedIn  = true;
+  try { localStorage.setItem('ens_session_v1', JSON.stringify({email:email,isAdmin:isAdmin,loggedIn:true})); } catch(_) {}
+  // Précharger les IDs favoris dès la connexion
+  google.script.run.withSuccessHandler(function(r){
+    if(r&&r.success&&r.enseignements){
+      S.favoriIds = new Set(r.enseignements.map(function(e){return e.id;}));
+      var n=S.favoriIds.size;
+      var b=document.getElementById('fav-badge'); if(b) b.textContent=n||'0';
+      var bf=document.getElementById('bnav-badge-fav'); if(bf){bf.textContent=n;bf.style.display=n>0?'flex':'none';}
+    }
+  }).withFailureHandler(function(){}).getFavoris(email);
+
+  // Appliquer le mode utilisateur si nécessaire
+  if (!isAdmin) {
+    document.body.classList.add('user-mode');
+  }
+
+  // Mettre à jour l'affichage du sidebar
+  const initial = email.charAt(0).toUpperCase();
+  document.getElementById('sidebar-avatar').textContent   = initial;
+  document.getElementById('sidebar-username').textContent = email;
+  document.getElementById('sidebar-role').textContent     = isAdmin
+    ? 'Administrateur · Accès complet'
+    : 'Utilisateur · Lecture seule';
+
+  // Masquer la page de connexion, afficher l'app
+  const loginPage = document.getElementById('login-page');
+  loginPage.style.opacity    = '0';
+  loginPage.style.transition = 'opacity .3s ease';
+  setTimeout(() => {
+    loginPage.style.display = 'none';
+    const app = document.getElementById('app');
+    app.style.display = '';
+    setCurrentDate();
+    setTodayDate();
+
+    // Rendre le dashboard immédiatement si les données sont déjà là (0 aller-retour supplémentaire)
+    // Sinon déclencher un appel normal (fallback)
+    if (dashboardData && dashboardData.success) {
+      onDashboardData(dashboardData);
+    } else {
+      loadDashboard();
+    }
+  }, 300);
+}
+
+
+function setCurrentDate() {
+  const d = new Date().toLocaleDateString('fr-FR',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  document.getElementById('current-date').textContent = d.charAt(0).toUpperCase()+d.slice(1);
+}
+
+function setTodayDate() {
+  const d = new Date();
+  document.getElementById('ens-date').value = d.toISOString().split('T')[0];
+}
+
+// ═══════════════════════════════════════════════════════════
+//  NAVIGATION
+// ═══════════════════════════════════════════════════════════
+const PAGE_TITLES = {dashboard:'Dashboard',themes:'Thèmes',enseignements:'Enseignements',favoris:'Favoris','theme-detail':'Thème','enseignement-detail':'Enseignement'};
+
+function navigate(page) {
+  if (S.page === page) { closeSidebar(); return; }
+  S.page = page;
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.toggle('active', el.dataset.page===page));
+  document.querySelectorAll('.bottom-nav-item').forEach(el => el.classList.toggle('active', el.dataset.page===page));
+  document.querySelectorAll('.page').forEach(el => el.classList.remove('active'));
+  const target = document.getElementById('page-'+page);
+  if (target) target.classList.add('active');
+  document.getElementById('topbar-title').textContent = PAGE_TITLES[page]||page;
+
+  const fab = document.getElementById('fab-btn');
+  // FAB et bouton Ajouter : visibles uniquement sur la page enseignements ET pour l'admin
+  const showAdd = (page === 'enseignements') && S.isAdmin;
+  fab.style.display = showAdd ? 'flex' : 'none';
+  const btnAddEns = document.getElementById('btn-add-ens');
+  if (btnAddEns) btnAddEns.style.display = showAdd ? 'inline-flex' : 'none';
+
+  closeSidebar();
+
+  if (page==='themes') loadThemes();
+  if (page==='enseignements') loadThemesForEnseignements();
+  if (page==='favoris') loadFavoris();
+}
+
+function refreshCurrentPage() {
+  if (S.page==='dashboard') loadDashboard();
+  else if (S.page==='themes') loadThemes();
+  else if (S.page==='enseignements') loadThemesForEnseignements();
+  else if (S.page==='favoris') loadFavoris();
+  else if (S.page==='theme-detail' && S.currentTheme) loadThemeDetail(S.currentTheme);
+  else if (S.page==='enseignement-detail' && S.currentEnsId) loadEnseignementDetail(S.currentEnsId);
+}
+
+// ═══════════════════════════════════════════════════════════
+//  SIDEBAR
+// ═══════════════════════════════════════════════════════════
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('sidebar-overlay').classList.toggle('open');
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebar-overlay').classList.remove('open');
+}
+
+// ═══════════════════════════════════════════════════════════
+//  DASHBOARD (inchangé)
+// ═══════════════════════════════════════════════════════════
+function loadDashboard() {
+  ['enseignements','themes','audios','documents','favoris'].forEach(k => {
+    const el = document.querySelector('#stat-'+k+' .stat-value');
+    if (el) el.textContent = '—';
+  });
+  google.script.run.withSuccessHandler(onDashboardData).withFailureHandler(onDashErr).getDashboardData(S.userEmail);
+}
+
+function onDashboardData(data) {
+  if (!data||!data.success) { onDashErr(data?.error); return; }
+  const sm = {enseignements:data.stats.totalEnseignements,themes:data.stats.totalThemes,
+    audios:data.stats.totalAudios,documents:data.stats.totalDocuments,favoris:data.stats.totalFavoris};
+  const sc = {enseignements:'gold',themes:'indigo',audios:'emerald',documents:'sky',favoris:'rose'};
+  Object.entries(sm).forEach(([k,v]) => {
+    const card = document.getElementById('stat-'+k);
+    if (card) { card.style.opacity='1'; card.classList.add(sc[k]); }
+    const el = document.querySelector('#stat-'+k+' .stat-value');
+    if (el) animateCount(el, 0, v, 800);
+  });
+  document.getElementById('fav-badge').textContent = data.stats.totalFavoris||'0';
+  renderDashTeachings(data.recentEnseignements||[]);
+}
+
+function onDashErr(err) {
+  console.error(err);
+  document.getElementById('teachings-list').innerHTML = `<div class="empty-state"><div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div><div class="empty-title">Impossible de charger les données</div><div class="empty-desc">${escH(String(err||'Erreur inconnue'))}</div></div>`;
+  showToast('Erreur de chargement','error');
+}
+
+function renderDashTeachings(list) {
+  const c = document.getElementById('teachings-list');
+  if (!list.length) {
+    c.innerHTML = `<div class="empty-state"><div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg></div><div class="empty-title">Aucun enseignement</div><div class="empty-desc">Ajoutez votre premier enseignement.</div></div>`;
+    return;
+  }
+  c.innerHTML = list.map((t,i)=>`
+    <div class="teaching-card animate-in delay-${Math.min(i+1,5)}">
+      <div class="teaching-num">${String(i+1).padStart(2,'0')}</div>
+      <div class="teaching-body">
+        <div class="teaching-meta">
+          <span class="theme-chip">${escH(t.theme||'—')}</span>
+          <span class="teaching-date">${fmtDate(t.date)}</span>
+        </div>
+        <div class="teaching-title">${escH(t.titre)}</div>
+        <div class="teaching-footer">
+          ${t.duree?`<span class="teaching-duration"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>${escH(t.duree)}</span>`:''}
+          ${t.ecoutes!==undefined?`<span class="teaching-ecoutes"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 18v-6a9 9 0 0118 0v6"/><path d="M21 19a2 2 0 01-2 2h-1a2 2 0 01-2-2v-3a2 2 0 012-2h3zM3 19a2 2 0 002 2h1a2 2 0 002-2v-3a2 2 0 00-2-2H3z"/></svg>${t.ecoutes}</span>`:''}
+        </div>
+      </div>
+      <div class="teaching-actions">
+        <button class="fav-btn ${S.favoriIds.has(t.id)?'active':''}" onclick="quickToggleFav('${escH(t.id)}',this)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="${S.favoriIds.has(t.id)?'currentColor':'none'}" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+        </button>
+        <button class="play-btn" onclick="playAudio('${escH(t.id)}','${escH(t.titre)}',${!!t.hasAudio})">
+          <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        </button>
+      </div>
+    </div>`).join('');
+}
+
+// ═══════════════════════════════════════════════════════════
+//  THEMES (gestion)
+// ═══════════════════════════════════════════════════════════
+function loadThemes() {
+  document.getElementById('themes-grid').innerHTML = `<div class="loading-card"><div class="skeleton" style="width:44px;height:44px;border-radius:14px;flex-shrink:0"></div><div style="flex:1"><div class="skeleton" style="width:55%;height:16px;margin-bottom:10px"></div><div class="skeleton" style="width:80%;height:12px;margin-bottom:6px"></div></div></div>`.repeat(3);
+  google.script.run.withSuccessHandler(onThemesData).withFailureHandler(e=>showToast('Erreur chargement thèmes','error')).getThemes();
+}
+
+function onThemesData(data) {
+  if (!data||!data.success) { showToast('Erreur chargement thèmes','error'); return; }
+  S.themes = data.themes||[];
+  document.getElementById('badge-themes').textContent = S.themes.length||'0';
+  renderThemes();
+  updateThemeSelects();
+}
+
+function renderThemes() {
+  const grid = document.getElementById('themes-grid');
+  if (!S.themes.length) {
+    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg></div><div class="empty-title">Aucun thème</div><div class="empty-desc">Créez votre premier thème pour organiser vos enseignements.</div></div>`;
+    return;
+  }
+  grid.innerHTML = S.themes.map((t,i) => `
+    <div class="theme-card animate-in" style="animation-delay:${i*0.05}s;cursor:pointer" onclick="showThemeDetail('${escH(t.nomTheme)}','history')">
+      <div class="theme-card-accent" style="background:${escH(t.couleur)}"></div>
+      <div class="theme-card-body">
+        <div class="theme-card-top">
+          <div class="theme-card-icon" style="background:${hexAlpha(t.couleur,.12)};color:${escH(t.couleur)}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg>
+          </div>
+          ${S.isAdmin ? `
+          <div class="theme-actions-trigger" onclick="toggleDropdown('dd-${escH(t.id)}',event)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+            <div class="dropdown-menu" id="dd-${escH(t.id)}">
+              <div class="dropdown-item" onclick="editTheme('${escH(t.id)}');event.stopPropagation()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Modifier
+              </div>
+              <div class="dropdown-item danger" onclick="confirmDeleteTheme('${escH(t.id)}','${escH(t.nomTheme)}');event.stopPropagation()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>Supprimer
+              </div>
+            </div>
+          </div>` : ''}
+        </div>
+        <div class="theme-name">${escH(t.nomTheme)}</div>
+        <div class="theme-desc">${escH(t.description||'Aucune description')}</div>
+        <div class="theme-card-footer">
+          <div class="theme-stat">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg>
+            <span>${t.nombreEnseignements} enseignement${t.nombreEnseignements!==1?'s':''}</span>
+          </div>
+          <div class="theme-date">${fmtDate(t.dateCreation)}</div>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+// ── Theme modal ──
+function openThemeModal(theme) {
+  document.getElementById('theme-edit-id').value = '';
+  document.getElementById('theme-nom').value = '';
+  document.getElementById('theme-desc').value = '';
+  document.getElementById('theme-modal-label').textContent = 'Nouveau thème';
+  document.getElementById('theme-modal-title').textContent = 'Créer un thème';
+  selectColor(S.themeColors[4]);
+
+  if (theme) {
+    document.getElementById('theme-edit-id').value = theme.id;
+    document.getElementById('theme-nom').value = theme.nomTheme;
+    document.getElementById('theme-desc').value = theme.description;
+    document.getElementById('theme-modal-label').textContent = 'Modifier le thème';
+    document.getElementById('theme-modal-title').textContent = 'Éditer "'+theme.nomTheme+'"';
+    selectColor(theme.couleur);
+  }
+  document.getElementById('modal-theme-overlay').classList.add('open');
+  setTimeout(()=>document.getElementById('theme-nom').focus(), 100);
+}
+
+function closeThemeModal(e) {
+  if (e&&e.target!==document.getElementById('modal-theme-overlay')) return;
+  document.getElementById('modal-theme-overlay').classList.remove('open');
+}
+
+function editTheme(id) {
+  closeAllDropdowns();
+  const t = S.themes.find(x=>x.id===id);
+  if (t) openThemeModal(t);
+}
+
+function saveTheme() {
+  const nom = document.getElementById('theme-nom').value.trim();
+  if (!nom) { showToast('Le nom du thème est requis','error'); return; }
+  const id  = document.getElementById('theme-edit-id').value;
+  const data = { nomTheme:nom, description:document.getElementById('theme-desc').value.trim(), couleur:document.getElementById('theme-couleur').value };
+  const btn  = document.getElementById('theme-save-btn');
+  btn.classList.add('btn-loading');
+
+  if (id) {
+    google.script.run.withSuccessHandler(r=>{
+      btn.classList.remove('btn-loading');
+      if (r.success) { closeThemeModal(); loadThemes(); showToast('Thème modifié ✓','success'); }
+      else showToast(r.error||'Erreur','error');
+    }).withFailureHandler(e=>{ btn.classList.remove('btn-loading'); showToast('Erreur','error'); })
+    .modifierTheme({...data, id});
+  } else {
+    google.script.run.withSuccessHandler(r=>{
+      btn.classList.remove('btn-loading');
+      if (r.success) { closeThemeModal(); loadThemes(); showToast('Thème créé ✓','success'); }
+      else showToast(r.error||'Erreur','error');
+    }).withFailureHandler(e=>{ btn.classList.remove('btn-loading'); showToast('Erreur','error'); })
+    .ajouterTheme(data);
+  }
+}
+
+function confirmDeleteTheme(id, nom) {
+  closeAllDropdowns();
+  S.confirmCb = () => {
+    google.script.run.withSuccessHandler(r=>{
+      if (r.success) { loadThemes(); showToast('Thème supprimé','success'); }
+      else showToast(r.error||'Erreur','error');
+    }).supprimerTheme(id);
+  };
+  document.getElementById('confirm-title').textContent = 'Supprimer "'+nom+'" ?';
+  document.getElementById('confirm-desc').textContent = 'Ce thème sera supprimé définitivement. Les enseignements liés ne seront pas affectés.';
+  document.getElementById('modal-confirm-overlay').classList.add('open');
+}
+
+// ── Color picker ──
+function buildColorPresets() {
+  const container = document.getElementById('color-presets');
+  container.innerHTML = S.themeColors.map(c=>`
+    <div class="color-dot" style="background:${c}" onclick="selectColor('${c}')" title="${c}"></div>`).join('');
+  selectColor(S.selectedColor);
+}
+
+function selectColor(color) {
+  S.selectedColor = color;
+  document.getElementById('theme-couleur').value = color;
+  document.getElementById('theme-color-picker').value = color;
+  document.querySelectorAll('.color-dot').forEach(d => {
+    d.classList.toggle('selected', d.style.background===color||d.style.backgroundColor===hexToRgb(color));
+  });
+}
+
+function onCustomColor(val) {
+  S.selectedColor = val;
+  document.getElementById('theme-couleur').value = val;
+  document.querySelectorAll('.color-dot').forEach(d=>d.classList.remove('selected'));
+}
+
+// ═══════════════════════════════════════════════════════════
+//  ENSEIGNEMENTS (affichage des thèmes dans la page enseignements)
+// ═══════════════════════════════════════════════════════════
+function loadThemesForEnseignements() {
+  const grid = document.getElementById('themes-grid-ens');
+  grid.innerHTML = `<div class="loading-card"><div class="skeleton" style="width:44px;height:44px;border-radius:14px;flex-shrink:0"></div><div style="flex:1"><div class="skeleton" style="width:55%;height:16px;margin-bottom:10px"></div><div class="skeleton" style="width:80%;height:12px;margin-bottom:6px"></div></div></div>`.repeat(3);
+  google.script.run
+    .withSuccessHandler(data => {
+      if (!data || !data.success) { showToast('Erreur chargement thèmes','error'); return; }
+      S.themes = data.themes || [];
+      document.getElementById('badge-ens').textContent = S.themes.length || '0';
+      renderThemesGrid('themes-grid-ens', S.themes, true);
+    })
+    .withFailureHandler(e => showToast('Erreur chargement thèmes','error'))
+    .getThemesWithTeachings();
+}
+
+function renderThemesGrid(containerId, themes, clickable = false) {
+  const grid = document.getElementById(containerId);
+  if (!themes.length) {
+    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg></div><div class="empty-title">Aucun thème avec enseignement</div><div class="empty-desc">Ajoutez un enseignement pour voir apparaître son thème.</div></div>`;
+    return;
+  }
+  grid.innerHTML = themes.map((t,i) => `
+    <div class="theme-card animate-in" style="animation-delay:${i*0.05}s" ${clickable ? `onclick="showThemeDetail('${escH(t.nomTheme)}')"` : ''}>
+      <div class="theme-card-accent" style="background:${escH(t.couleur)}"></div>
+      <div class="theme-card-body">
+        <div class="theme-card-top">
+          <div class="theme-card-icon" style="background:${hexAlpha(t.couleur,.12)};color:${escH(t.couleur)}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg>
+          </div>
+        </div>
+        <div class="theme-name">${escH(t.nomTheme)}</div>
+        <div class="theme-desc">${escH(t.description||'Aucune description')}</div>
+        ${t.dernierEnseignement ? `<div class="theme-last">Dernier: ${escH(t.dernierEnseignement.titre)} (${escH(t.dernierEnseignement.date)})</div>` : ''}
+        <div class="theme-card-footer">
+          <div class="theme-stat">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg>
+            <span>${t.nombreEnseignements} enseignement${t.nombreEnseignements!==1?'s':''}</span>
+          </div>
+          <div class="theme-date">${fmtDate(t.dateCreation)}</div>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+// ═══════════════════════════════════════════════════════════
+//  PAGE DÉTAIL THÈME
+// ═══════════════════════════════════════════════════════════
+function showThemeDetail(themeName, mode) {
+  // mode 'history' = depuis onglet Thèmes (liste lecture seule)
+  // mode 'full'    = depuis onglet Enseignements (cards interactives complètes)
+  S.themeDetailMode = (mode === 'history') ? 'history' : 'full';
+  S.currentTheme = themeName;
+  document.getElementById('theme-detail-label').textContent = 'Thème';
+  document.getElementById('theme-detail-title').textContent = themeName;
+  const theme = S.themes.find(t => t.nomTheme === themeName);
+  document.getElementById('theme-detail-desc').textContent = theme ? theme.description || '—' : '—';
+  document.getElementById('theme-detail-count').innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg> <span id="theme-detail-count-value">0</span> enseignement(s)`;
+  // Adapter le bouton retour selon l'onglet d'origine
+  const backBtn = document.getElementById('theme-detail-back-btn');
+  if (backBtn) {
+    if (S.themeDetailMode === 'history') {
+      backBtn.onclick = function() { navigate('themes'); };
+      backBtn.querySelector('.back-btn-label').textContent = 'Retour aux thèmes';
+    } else {
+      backBtn.onclick = function() { navigate('enseignements'); };
+      backBtn.querySelector('.back-btn-label').textContent = 'Retour aux thèmes';
+    }
+  }
+  navigate('theme-detail');
+  loadThemeDetail(themeName);
+}
+
+function loadThemeDetail(themeName) {
+  const list = document.getElementById('theme-enseignements-list');
+  list.innerHTML = `<div class="loading-card"><div class="skeleton" style="width:40px;height:40px;border-radius:50%;flex-shrink:0"></div><div style="flex:1"><div class="skeleton" style="width:30%;height:10px;margin-bottom:8px"></div><div class="skeleton" style="width:70%;height:15px;margin-bottom:8px"></div><div class="skeleton" style="width:45%;height:10px"></div></div></div>`.repeat(3);
+  google.script.run.withSuccessHandler(data => {
+    if (!data || !data.success) { showToast('Erreur chargement','error'); return; }
+    const ens = data.enseignements || [];
+    document.getElementById('theme-detail-count-value').textContent = ens.length;
+    renderThemeEnseignements(ens);
+  }).withFailureHandler(e => showToast('Erreur chargement','error')).getEnseignementsByTheme(themeName);
+}
+
+function renderThemeEnseignements(list) {
+  // Dispatcher selon le mode d'accès
+  if (S.themeDetailMode === 'history') {
+    renderThemeHistory(list);
+  } else {
+    renderThemeEnseignementsFull(list);
+  }
+}
+
+// ── Mode HISTORY : liste chronologique lecture seule (depuis onglet Thèmes) ──
+function renderThemeHistory(list) {
+  const container = document.getElementById('theme-enseignements-list');
+  if (!list.length) {
+    container.innerHTML = `<div class="empty-state"><div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg></div><div class="empty-title">Aucun enseignement dans ce thème</div><div class="empty-desc">Ajoutez un enseignement avec ce thème.</div></div>`;
+    return;
+  }
+  const theme = S.themes.find(t => t.nomTheme === (list[0] && list[0].theme)) || {};
+  const col = theme.couleur || '#6366F1';
+  container.innerHTML = `<div class="hist-list">` + list.map((e, i) => `
+    <div class="hist-item animate-in" style="animation-delay:${i*0.03}s">
+      <div class="hist-item-num" style="color:${col};border-color:${hexAlpha(col,.25)}">${String(i+1).padStart(2,'0')}</div>
+      <div class="hist-item-body">
+        <div class="hist-item-title">${escH(e.titre)}</div>
+        <div class="hist-item-meta">
+          <span class="hist-meta-chip">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            ${fmtDate(e.date)}
+          </span>
+          ${e.duree && e.duree !== '--:--' ? `<span class="hist-meta-chip">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            ${escH(e.duree)}
+          </span>` : ''}
+          ${e.hasAudio ? `<span class="hist-badge-audio">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+            Audio
+          </span>` : ''}
+          ${e.ecoutes > 0 ? `<span class="hist-meta-chip">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 18v-6a9 9 0 0118 0v6"/><path d="M21 19a2 2 0 01-2 2h-1a2 2 0 01-2-2v-3a2 2 0 012-2h3zM3 19a2 2 0 002 2h1a2 2 0 002-2v-3a2 2 0 00-2-2H3z"/></svg>
+            ${e.ecoutes} écoute${e.ecoutes !== 1 ? 's' : ''}
+          </span>` : ''}
+        </div>
+      </div>
+      <div class="hist-item-line" style="background:${hexAlpha(col,.18)}"></div>
+    </div>`).join('') + `</div>`;
+}
+
+// ── Mode FULL : cards interactives complètes (depuis onglet Enseignements) ──
+function renderThemeEnseignementsFull(list) {
+  const container = document.getElementById('theme-enseignements-list');
+  if (!list.length) {
+    container.innerHTML = `<div class="empty-state"><div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg></div><div class="empty-title">Aucun enseignement dans ce thème</div><div class="empty-desc">Ajoutez un enseignement avec ce thème.</div></div>`;
+    return;
+  }
+  container.innerHTML = list.map((e,i) => {
+    const col = (S.themes.find(t => t.nomTheme === e.theme) || {}).couleur || '#6366F1';
+    return `
+    <div class="ens-card animate-in" style="animation-delay:${i*0.04}s" onclick="showEnseignementDetail('${escH(e.id)}')">
+      <div class="ens-card-play">
+        <button class="ens-play-btn ${e.hasAudio?'':'no-audio'}" onclick="event.stopPropagation(); playAudio('${escH(e.id)}','${escH(e.titre)}',${!!e.hasAudio})" title="${e.hasAudio?'Écouter':'Pas de fichier audio'}">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        </button>
+      </div>
+      <div class="ens-card-body">
+        <div class="ens-card-meta">
+          <span class="ens-theme-chip" style="background:${hexAlpha(col,.13)};color:${col};border:1px solid ${hexAlpha(col,.3)}">${escH(e.theme||'—')}</span>
+          <span class="ens-info-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>${fmtDate(e.date)}</span>
+        </div>
+        <div class="ens-card-title">${escH(e.titre)}</div>
+        <div class="ens-card-info">
+          <span class="ens-info-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>${escH(e.duree)}</span>
+          <span class="ens-info-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 18v-6a9 9 0 0118 0v6"/><path d="M21 19a2 2 0 01-2 2h-1a2 2 0 01-2-2v-3a2 2 0 012-2h3zM3 19a2 2 0 002 2h1a2 2 0 002-2v-3a2 2 0 00-2-2H3z"/></svg>${e.ecoutes} écoute${e.ecoutes!==1?'s':''}</span>
+          ${e.hasAudio?`<span class="ens-info-item" style="color:var(--emerald)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>Audio</span>`:''}
+        </div>
+      </div>
+      <div class="ens-card-actions" onclick="event.stopPropagation()">
+        <button class="ens-fav-btn ${S.favoriIds.has(e.id)?'active':''}" onclick="toggleFav('${escH(e.id)}',this)" title="${e.favori?'Retirer des favoris':'Ajouter aux favoris'}">
+          <svg viewBox="0 0 24 24" fill="${S.favoriIds.has(e.id)?'currentColor':'none'}" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+        </button>
+        ${S.isAdmin ? `
+        <div class="ens-menu-btn" onclick="toggleDropdown('ens-dd-${escH(e.id)}',event)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+          <div class="dropdown-menu" id="ens-dd-${escH(e.id)}">
+            <div class="dropdown-item danger" onclick="confirmDeleteEns('${escH(e.id)}','${escH(e.titre)}');event.stopPropagation()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>Supprimer
+            </div>
+          </div>
+        </div>` : ''}
+      </div>
+    </div>`; }).join('');
+}
+
+// ═══════════════════════════════════════════════════════════
+//  PAGE DÉTAIL ENSEIGNEMENT
+// ═══════════════════════════════════════════════════════════
+function showEnseignementDetail(id) {
+  S.currentEnsId = id;
+  navigate('enseignement-detail');
+  loadEnseignementDetail(id);
+}
+
+function loadEnseignementDetail(id) {
+  document.getElementById('ens-detail-title').textContent = 'Chargement...';
+  document.getElementById('ens-detail-meta').textContent = '';
+  document.getElementById('detail-notes').innerHTML = '<p class="empty-desc">Chargement...</p>';
+  document.getElementById('detail-docs-list').innerHTML = '<p class="empty-desc">Chargement...</p>';
+  const audioList = document.getElementById('detail-audio-list');
+  audioList.innerHTML = '';
+  const audioPlayer = document.getElementById('detail-audio-player');
+  audioPlayer.src = '';
+  audioPlayer.style.display = 'none';
+  document.getElementById('detail-player-loading').style.display = 'block';
+  document.getElementById('detail-player-error').style.display = 'none';
+
+  google.script.run.withSuccessHandler(data => {
+    if (!data || !data.success) { showToast('Erreur chargement','error'); return; }
+    const e = data.enseignement;
+    document.getElementById('ens-detail-title').textContent = e.titre;
+    document.getElementById('ens-detail-meta').textContent = `${e.date} · ${e.theme}`;
+    const notesDiv = document.getElementById('detail-notes');
+    notesDiv.innerHTML = e.notes ? e.notes.replace(/\n/g, '<br>') : '<p class="empty-desc">Aucune note.</p>';
+    
+    // Affichage des audios
+    if (e.audios && e.audios.length > 0) {
+      audioList.innerHTML = e.audios.map((audio, idx) => `
+        <div class="doc-item" onclick="playAudioFromDetail('${audio.id}', '${e.titre} - ${audio.name}')">
+          <div class="doc-icon" style="background:rgba(240,180,41,.1); color:var(--gold);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+          </div>
+          <span class="doc-name">${escH(audio.name)}</span>
+          <span class="doc-open-btn">Écouter</span>
+        </div>
+      `).join('');
+      document.getElementById('detail-player-loading').style.display = 'none';
+    } else {
+      audioList.innerHTML = '<p class="empty-desc">Aucun fichier audio.</p>';
+      document.getElementById('detail-player-loading').style.display = 'none';
+    }
+
+    const docsIds = e.docsIds ? e.docsIds.split(',') : [];
+    const docsList = document.getElementById('detail-docs-list');
+    if (docsIds.length === 0) {
+      docsList.innerHTML = '<p class="empty-desc">Aucun document.</p>';
+    } else {
+      docsList.innerHTML = '';
+      docsIds.forEach(docId => {
+        if (!docId) return;
+        google.script.run.withSuccessHandler(fileData => {
+          if (fileData.success) {
+            const div = document.createElement('div');
+            div.className = 'doc-item';
+            div.innerHTML = `
+              <div class="doc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+              <span class="doc-name">${escH(fileData.name)}</span>
+              <a href="${fileData.url}" target="_blank" class="doc-open-btn">Ouvrir</a>
+            `;
+            docsList.appendChild(div);
+          }
+        }).withFailureHandler(() => {}).getFileUrl(docId);
+      });
+    }
+  }).withFailureHandler(err => {
+    showToast('Erreur chargement détail','error');
+  }).getEnseignementDetails(id);
+}
+
+function playAudioFromDetail(driveId, title) {
+  const frame = document.getElementById('detail-audio-player');
+  const loading = document.getElementById('detail-player-loading');
+  const error = document.getElementById('detail-player-error');
+  
+  frame.style.display = 'none';
+  loading.style.display = 'block';
+  error.style.display = 'none';
+  
+  google.script.run.withSuccessHandler(r => {
+    loading.style.display = 'none';
+    if (r && r.success) {
+      frame.src = r.previewUrl;
+      frame.style.display = 'block';
+    } else {
+      error.style.display = 'block';
+      error.textContent = 'Impossible de charger l\'audio : ' + (r ? r.error : 'erreur inconnue');
+    }
+  }).withFailureHandler(err => {
+    loading.style.display = 'none';
+    error.style.display = 'block';
+    error.textContent = 'Erreur : ' + err;
+  }).getAudioUrl(driveId);
+}
+
+function goBackToTheme() {
+  if (S.currentTheme) {
+    showThemeDetail(S.currentTheme);
+  } else {
+    navigate('enseignements');
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+//  FONCTIONS POUR L'UPLOAD DIRECT AUDIO MULTIPLE
+// ═══════════════════════════════════════════════════════════
+
+function onAudioFilesSelected(files) {
+  if (!files || files.length === 0) return;
+  S.audioFiles = [];
+  for (let i = 0; i < files.length; i++) {
+    const file = files[i];
+    // Validation par MIME type OU extension (iOS retourne parfois un type vide)
+    const audioExts = /\.(mp3|m4a|aac|ogg|oga|opus|wav|wave|flac|aiff|aif|wma|3gp|3gpp|amr|webm)$/i;
+    const isAudio = file.type.startsWith('audio/') || audioExts.test(file.name);
+    if (!isAudio) {
+      showToast(`Le fichier ${file.name} n'est pas un format audio supporté`, 'error');
+      continue;
+    }
+    S.audioFiles.push(file);
+  }
+  renderAudioFilesList();
+}
+
+function renderAudioFilesList() {
+  const container = document.getElementById('audio-files-list');
+  if (!S.audioFiles.length) {
+    container.innerHTML = '';
+    return;
+  }
+  container.innerHTML = S.audioFiles.map((file, index) => `
+    <div class="file-selected show">
+      <span class="file-selected-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="20 6 9 17 4 12"/></svg></span>
+      <span class="file-selected-name">${escH(file.name)}</span>
+      <span class="file-selected-size">${formatSize(file.size)}</span>
+      <button class="file-remove" onclick="removeAudioFile(${index})" title="Retirer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>`).join('');
+}
+
+function removeAudioFile(index) {
+  S.audioFiles.splice(index, 1);
+  renderAudioFilesList();
+  document.getElementById('audio-file').value = '';
+}
+
+function onDropAudio(e) {
+  e.preventDefault();
+  onDragLeave('audio-zone');
+  const files = e.dataTransfer.files;
+  if (files.length > 0) {
+    onAudioFilesSelected(files);
+  }
+}
+
+function uploadAudioToDrive(file) {
+  return new Promise((resolve, reject) => {
+    google.script.run
+      .withSuccessHandler((tokenResult) => {
+        // Compatibilité : Apps Script natif retourne une chaîne,
+        // le shim GitHub Pages retourne {success:true, token:"..."}
+        const token = (tokenResult && typeof tokenResult === 'object')
+          ? tokenResult.token
+          : tokenResult;
+
+        if (!token) { reject(new Error('Token OAuth introuvable')); return; }
+
+        google.script.run
+          .withSuccessHandler((folderResult) => {
+            const folderId = (folderResult && typeof folderResult === 'object')
+              ? folderResult.folderId
+              : folderResult;
+
+            if (!folderId) { reject(new Error('Dossier Drive introuvable')); return; }
+
+            const metadata = {
+              name: file.name,
+              mimeType: file.type,
+              parents: [folderId]
+            };
+            const formData = new FormData();
+            formData.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
+            formData.append('file', file);
+
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', 'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart');
+            xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+
+            xhr.onload = () => {
+              if (xhr.status >= 200 && xhr.status < 300) {
+                try {
+                  const response = JSON.parse(xhr.responseText);
+                  resolve(response.id);
+                } catch(e) {
+                  reject(new Error('Réponse Drive invalide'));
+                }
+              } else {
+                reject(new Error('Upload échoué (' + xhr.status + ')'));
+              }
+            };
+            xhr.onerror = () => reject(new Error('Erreur réseau lors de l\'upload'));
+            xhr.send(formData);
+          })
+          .withFailureHandler((err) => reject(new Error('Dossier Drive: ' + err)))
+          .getDriveFolderId('Enseignements_Audio');
+      })
+      .withFailureHandler((err) => reject(new Error('Token OAuth: ' + err)))
+      .getAccessToken();
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+//  ENREGISTREMENT ENSEIGNEMENT (nouvelle version asynchrone)
+// ═══════════════════════════════════════════════════════════
+async function saveEnseignement() {
+  const titre = document.getElementById('ens-titre').value.trim();
+  const theme = document.getElementById('ens-theme').value;
+  const date  = document.getElementById('ens-date').value;
+  if (!titre) { showToast('Le titre est requis','error'); return; }
+  if (!theme) { showToast('Sélectionnez un thème','error'); return; }
+  if (!date)  { showToast('La date est requise','error'); return; }
+
+  const btn = document.getElementById('ens-save-btn');
+  btn.disabled = true;
+  btn.classList.add('btn-loading');
+  btn.innerHTML = 'Préparation...';
+
+  try {
+    let audioIds = [];
+    if (S.audioFiles && S.audioFiles.length > 0) {
+      btn.innerHTML = 'Upload audio...';
+      const uploadPromises = S.audioFiles.map(file => uploadAudioToDrive(file));
+      audioIds = await Promise.all(uploadPromises);
+    }
+
+    const docsData = S.docsData.map(d => ({
+      name: d.name,
+      mimeType: d.mimeType,
+      data: d.data
+    }));
+
+    const payload = {
+      date: formatDateForSheet(date),
+      theme: theme,
+      titre: titre,
+      notes: document.getElementById('ens-notes').value.trim(),
+      audioIds: audioIds, // tableau d'IDs
+      docs: docsData,
+      duree: ''
+    };
+
+    btn.innerHTML = 'Enregistrement...';
+    const result = await new Promise((resolve, reject) => {
+      google.script.run
+        .withSuccessHandler(resolve)
+        .withFailureHandler(reject)
+        .createEnseignement(payload);
+    });
+
+    if (result.success) {
+      closeEnsModal();
+      loadThemesForEnseignements();
+      loadThemes();
+      loadDashboard();
+      if (S.page === 'theme-detail' && S.currentTheme) loadThemeDetail(S.currentTheme);
+      showToast('Enseignement ajouté ✓', 'success');
+    } else {
+      throw new Error(result.error || 'Erreur inconnue');
+    }
+  } catch (err) {
+    showToast('Erreur: ' + err.message, 'error');
+    console.error(err);
+  } finally {
+    btn.disabled = false;
+    btn.classList.remove('btn-loading');
+    btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="15" height="15"><polyline points="20 6 9 17 4 12"/></svg>Enregistrer';
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+//  UPDATE THEME SELECTS (pour les modals)
+// ═══════════════════════════════════════════════════════════
+function updateThemeSelects() {
+  const opts = S.themes.map(t=>`<option value="${escH(t.nomTheme)}">${escH(t.nomTheme)}</option>`).join('');
+  document.getElementById('ens-theme').innerHTML = '<option value="">Sélectionner un thème…</option>' + opts;
+}
+
+// ═══════════════════════════════════════════════════════════
+//  ENSEIGNEMENT MODAL (réinitialisation)
+// ═══════════════════════════════════════════════════════════
+function openEnsModal() {
+  document.getElementById('ens-date').value = new Date().toISOString().split('T')[0];
+  document.getElementById('ens-theme').value = '';
+  document.getElementById('ens-titre').value = '';
+  document.getElementById('ens-notes').value = '';
+  S.audioFiles = [];
+  S.docsData = [];
+  document.getElementById('audio-files-list').innerHTML = '';
+  document.getElementById('audio-file').value = '';
+  document.getElementById('docs-list').innerHTML = '';
+  document.getElementById('docs-files').value = '';
+  if (!S.themes.length) google.script.run.withSuccessHandler(onThemesData).getThemes();
+  document.getElementById('modal-ens-overlay').classList.add('open');
+  setTimeout(() => document.getElementById('ens-titre').focus(), 100);
+}
+
+function closeEnsModal(e) {
+  if (e && e.target !== document.getElementById('modal-ens-overlay')) return;
+  document.getElementById('modal-ens-overlay').classList.remove('open');
+}
+
+function confirmDeleteEns(id, titre) {
+  closeAllDropdowns();
+  S.confirmCb = () => {
+    google.script.run.withSuccessHandler(r=>{
+      if (r.success) {
+        if (S.page === 'theme-detail' && S.currentTheme) loadThemeDetail(S.currentTheme);
+        else loadThemesForEnseignements();
+        loadThemes();
+        loadDashboard();
+        showToast('Supprimé','success');
+      } else showToast(r.error||'Erreur','error');
+    }).supprimerEnseignement(id);
+  };
+  document.getElementById('confirm-title').textContent = 'Supprimer "'+titre+'" ?';
+  document.getElementById('confirm-desc').textContent = 'Cet enseignement sera supprimé définitivement. Les fichiers Drive associés ne seront pas supprimés.';
+  document.getElementById('modal-confirm-overlay').classList.add('open');
+}
+
+// ── Favorites ──
+function toggleFav(id, btn) {
+  btn.disabled = true;
+  google.script.run
+    .withSuccessHandler(function(r) {
+      btn.disabled = false;
+      if (!r||!r.success){showToast('Erreur','error');return;}
+      if(r.favori){S.favoriIds.add(id);}else{S.favoriIds.delete(id);}
+      btn.classList.toggle('active', r.favori);
+      var svg=btn.querySelector('svg');
+      if(svg) svg.setAttribute('fill', r.favori?'currentColor':'none');
+      var n=S.favoriIds.size;
+      document.getElementById('fav-badge').textContent=n||'0';
+      var bf=document.getElementById('bnav-badge-fav');if(bf){bf.textContent=n;bf.style.display=n>0?'flex':'none';}
+      showToast(r.favori?'✦ Ajouté aux favoris':'Retiré des favoris', r.favori?'success':'info');
+    })
+    .withFailureHandler(function(){btn.disabled=false;showToast('Erreur','error');})
+    .toggleFavori(id, S.userEmail);
+}
+
+function quickToggleFav(id, btn) {
+  btn.disabled = true;
+  google.script.run
+    .withSuccessHandler(function(r){
+      btn.disabled=false;
+      if(!r||!r.success){showToast('Erreur','error');return;}
+      if(r.favori){S.favoriIds.add(id);}else{S.favoriIds.delete(id);}
+      btn.classList.toggle('active', r.favori);
+      var svg=btn.querySelector('svg');
+      if(svg) svg.setAttribute('fill',r.favori?'currentColor':'none');
+      var n=S.favoriIds.size;
+      document.getElementById('fav-badge').textContent=n||'0';
+      var bf=document.getElementById('bnav-badge-fav');if(bf){bf.textContent=n;bf.style.display=n>0?'flex':'none';}
+      showToast(r.favori?'✦ Ajouté aux favoris':'Retiré des favoris',r.favori?'success':'info');
+    })
+    .withFailureHandler(function(){btn.disabled=false;showToast('Erreur','error');})
+    .toggleFavori(id, S.userEmail);
+}
+
+// ── Audio Player (pour le modal existant) ──
+function playAudio(id, titre, hasAudio) {
+  if (!hasAudio) { showToast('Aucun fichier audio disponible','info'); return; }
+  S.currentAudioEnsId = id;
+  document.getElementById('player-title').textContent = titre;
+  document.getElementById('player-loading').style.display = 'block';
+  document.getElementById('player-error').style.display  = 'none';
+  document.getElementById('audio-player').style.display  = 'none';
+  document.getElementById('modal-player-overlay').classList.add('open');
+
+  google.script.run.withSuccessHandler(r => {
+    document.getElementById('player-loading').style.display = 'none';
+    if (!r || !r.success) {
+      document.getElementById('player-error').style.display = 'block';
+      document.getElementById('player-error').textContent   = 'Impossible de récupérer le fichier audio : ' + (r ? r.error : 'erreur inconnue');
+      return;
+    }
+    const frame = document.getElementById('audio-player');
+    frame.src   = r.previewUrl;
+    frame.style.display = 'block';
+
+    if (S.currentAudioEnsId) {
+      google.script.run.incrementEcoutes(S.currentAudioEnsId);
+      S.currentAudioEnsId = null;
+    }
+  }).withFailureHandler(err => {
+    document.getElementById('player-loading').style.display = 'none';
+    document.getElementById('player-error').style.display  = 'block';
+    document.getElementById('player-error').textContent    = 'Erreur Apps Script : ' + (err ? err.message || String(err) : 'inconnue');
+  }).getAudioUrlByEnsId(id);
+}
+
+function onAudioPlay() {
+  if (S.currentAudioEnsId) {
+    google.script.run.incrementEcoutes(S.currentAudioEnsId);
+    S.currentAudioEnsId = null;
+  }
+}
+
+function onAudioElementError(audioEl, errorElId, loadingElId) {
+  if (loadingElId) {
+    const loadingEl = document.getElementById(loadingElId);
+    if (loadingEl) loadingEl.style.display = 'none';
+  }
+  if (audioEl) audioEl.style.display = 'none';
+  const errEl = document.getElementById(errorElId);
+  if (!errEl) return;
+  const code = (audioEl && audioEl.error) ? audioEl.error.code : 0;
+  const msgs = {
+    1: 'Lecture interrompue.',
+    2: 'Erreur réseau — vérifiez votre connexion Internet.',
+    3: 'Format audio non supporté par ce navigateur.',
+    4: 'Fichier audio inaccessible. Vérifiez que le fichier Drive existe et que vous êtes connecté à Google.'
+  };
+  errEl.style.display = 'block';
+  errEl.textContent   = msgs[code] || 'Impossible de lire ce fichier audio (code ' + code + ').';
+}
+
+function closePlayer(e) {
+  if (e && e.target !== document.getElementById('modal-player-overlay')) return;
+  const frame = document.getElementById('audio-player');
+  frame.src = '';
+  frame.style.display = 'none';
+  document.getElementById('player-loading').style.display = 'none';
+  document.getElementById('player-error').style.display  = 'none';
+  document.getElementById('modal-player-overlay').classList.remove('open');
+}
+
+// ═══════════════════════════════════════════════════════════
+//  FILE UPLOAD (pour documents uniquement, reste en base64)
+// ═══════════════════════════════════════════════════════════
+function onFileSelect(e, type) {
+  if (type !== 'audio') return;
+}
+
+function onFilesSelect(e) {
+  const files = Array.from(e.target.files);
+  files.forEach(file => {
+    if (file.size > 10*1024*1024) { showToast(file.name+': trop volumineux (max 10 MB)','error'); return; }
+    readFileAsBase64(file).then(b64 => {
+      S.docsData.push({ name:file.name, mimeType:file.type||'application/octet-stream', data:b64, size:file.size });
+      renderDocsList();
+    });
+  });
+}
+
+function renderDocsList() {
+  document.getElementById('docs-list').innerHTML = S.docsData.map((d,i)=>`
+    <div class="file-selected show">
+      <span class="file-selected-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="20 6 9 17 4 12"/></svg></span>
+      <span class="file-selected-name">${escH(d.name)}</span>
+      <span class="file-selected-size">${formatSize(d.size)}</span>
+      <button class="file-remove" onclick="removeDoc(${i})" title="Retirer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>`).join('');
+}
+
+function removeDoc(i) {
+  S.docsData.splice(i,1);
+  renderDocsList();
+}
+
+function onDragOver(e, zoneId) { e.preventDefault(); document.getElementById(zoneId).classList.add('drag-over'); }
+function onDragLeave(zoneId) { document.getElementById(zoneId).classList.remove('drag-over'); }
+function onDrop(e, type) {
+  e.preventDefault();
+  onDragLeave(type==='audio'?'audio-zone':'docs-zone');
+  const files = Array.from(e.dataTransfer.files);
+  if (type==='docs') {
+    files.forEach(f=>{
+      if (f.size <= 10*1024*1024) {
+        readFileAsBase64(f).then(b64 => {
+          S.docsData.push({ name: f.name, mimeType: f.type, data: b64, size: f.size });
+          renderDocsList();
+        });
+      }
+    });
+  }
+}
+
+function readFileAsBase64(file) {
+  return new Promise((res,rej) => {
+    const r = new FileReader();
+    r.onload  = e => res(e.target.result.split(',')[1]);
+    r.onerror = rej;
+    r.readAsDataURL(file);
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+//  MODALS HELPERS
+// ═══════════════════════════════════════════════════════════
+function closeConfirm() { document.getElementById('modal-confirm-overlay').classList.remove('open'); }
+function executeConfirm() { closeConfirm(); if (S.confirmCb) { S.confirmCb(); S.confirmCb=null; } }
+
+function toggleDropdown(id, e) {
+  e.stopPropagation();
+  closeAllDropdowns();
+  document.getElementById(id).classList.add('open');
+}
+function closeAllDropdowns() { document.querySelectorAll('.dropdown-menu').forEach(d=>d.classList.remove('open')); }
+document.addEventListener('click', closeAllDropdowns);
+
+// ═══════════════════════════════════════════════════════════
+//  TOAST
+// ═══════════════════════════════════════════════════════════
+function showToast(msg, type='info') {
+  const icons = {
+    success:`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--emerald)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>`,
+    error:  `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--rose)" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>`,
+    info:   `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`
+  };
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.innerHTML = (icons[type]||icons.info)+`<span>${escH(msg)}</span>`;
+  document.getElementById('toast-container').appendChild(t);
+  requestAnimationFrame(()=>requestAnimationFrame(()=>t.classList.add('show')));
+  setTimeout(()=>{ t.classList.remove('show'); setTimeout(()=>t.remove(),350); }, 3500);
+}
+
+// ═══════════════════════════════════════════════════════════
+//  UTILITIES
+// ═══════════════════════════════════════════════════════════
+// ── fmtDate : normalise toute valeur de date en dd/MM/yyyy (sécurité double-couche
+//              après _safeDate backend — couvre les cas de dates avec heure côté JS) ──
+function fmtDate(str) {
+  if (!str) return '—';
+  const s = String(str).trim();
+  // Déjà au bon format dd/MM/yyyy
+  if (/^\d{2}\/\d{2}\/\d{4}$/.test(s)) return s;
+  // Tenter split dd/MM/yyyy avec potentiels caractères supplémentaires (heure, etc.)
+  const pSlash = s.split('/');
+  if (pSlash.length === 3) {
+    return pSlash[0].padStart(2,'0') + '/' + pSlash[1].padStart(2,'0') + '/' + pSlash[2].substring(0,4);
+  }
+  // Fallback : parser comme Date JS (couvre ISO, timestamps, etc.)
+  const d = new Date(s);
+  if (!isNaN(d.getTime())) {
+    const dd = String(d.getDate()).padStart(2,'0');
+    const mm = String(d.getMonth()+1).padStart(2,'0');
+    return dd + '/' + mm + '/' + d.getFullYear();
+  }
+  return s;
+}
+
+function animateCount(el, from, to, dur) {
+  const start = performance.now();
+  const tick  = now => {
+    const p = Math.min((now-start)/dur,1);
+    const e = 1-Math.pow(1-p,3);
+    el.textContent = Math.round(from+(to-from)*e);
+    if (p<1) requestAnimationFrame(tick);
+  };
+  requestAnimationFrame(tick);
+}
+
+function escH(str) {
+  if (str===null||str===undefined) return '';
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+function hexAlpha(hex, a) {
+  const r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16);
+  return `rgba(${r},${g},${b},${a})`;
+}
+
+function hexToRgb(hex) {
+  const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);
+  return `rgb(${r}, ${g}, ${b})`;
+}
+
+function formatSize(bytes) {
+  if (bytes<1024) return bytes+'B';
+  if (bytes<1024*1024) return (bytes/1024).toFixed(1)+'KB';
+  return (bytes/(1024*1024)).toFixed(1)+'MB';
+}
+
+function formatDateForSheet(isoDate) {
+  if (!isoDate) return '';
+  const [y,m,d] = isoDate.split('-');
+  return `${d}/${m}/${y}`;
+}
+
+// ═══════════════════════════════════════════════════════════
+//  FAVORIS MODULE
+// ═══════════════════════════════════════════════════════════
+function loadFavoris() {
+  S.favLoaded = false;
+  const list = document.getElementById('fav-list');
+  list.innerHTML = [1,2,3].map(()=>`
+    <div class="loading-card">
+      <div class="skeleton" style="width:38px;height:38px;border-radius:50%;flex-shrink:0"></div>
+      <div style="flex:1">
+        <div class="skeleton" style="width:28%;height:10px;margin-bottom:9px"></div>
+        <div class="skeleton" style="width:65%;height:15px;margin-bottom:8px"></div>
+        <div class="skeleton" style="width:42%;height:10px"></div>
+      </div>
+    </div>`).join('');
+  document.getElementById('fav-hero-count').textContent = '—';
+
+  google.script.run
+    .withSuccessHandler(onFavorisData)
+    .withFailureHandler(err => { showToast('Erreur chargement favoris','error'); console.error(err); })
+    .getFavoris(S.userEmail);
+}
+
+function onFavorisData(data) {
+  if (!data || !data.success) { showToast('Erreur chargement favoris','error'); return; }
+  S.favoris   = data.enseignements || [];
+  S.favLoaded = true;
+
+  if (!S.themes.length) {
+    google.script.run.withSuccessHandler(d => {
+      if (d && d.success) { S.themes = d.themes || []; }
+      renderFavoris();
+    }).getThemes();
+  } else {
+    renderFavoris();
+  }
+
+  const n = S.favoris.length;
+  document.getElementById('fav-badge').textContent       = n || '0';
+  document.getElementById('fav-hero-count').textContent  = n;
+}
+
+function sortFavoris(key) {
+  S.favSort = key;
+  document.querySelectorAll('.fav-sort-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('fav-sort-'+key).classList.add('active');
+  renderFavoris();
+}
+
+function renderFavoris() {
+  const list = document.getElementById('fav-list');
+  if (!S.favoris.length) {
+    list.innerHTML = `<div class="fav-empty"><div class="fav-empty-illustration"><div class="fav-empty-circle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></div><div class="fav-empty-hearts"><span>❤️</span><span>❤️</span><span>❤️</span><span>❤️</span></div></div><div class="fav-empty-title">Aucun favori</div><div class="fav-empty-desc">Marquez vos enseignements préférés avec le cœur.</div><button class="btn-fav-empty" onclick="navigate('enseignements')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg>Découvrir les enseignements</button></div>`;
+    return;
+  }
+
+  let sorted = [...S.favoris];
+  if (S.favSort === 'date') {
+    sorted.sort((a,b) => _parseDateTS(b.date) - _parseDateTS(a.date));
+  } else if (S.favSort === 'theme') {
+    sorted.sort((a,b) => a.theme.localeCompare(b.theme));
+  } else if (S.favSort === 'ecoutes') {
+    sorted.sort((a,b) => (b.ecoutes||0) - (a.ecoutes||0));
+  }
+
+  list.innerHTML = sorted.map((e, idx) => {
+    const themeColor = (S.themes.find(t => t.nomTheme === e.theme) || {}).couleur || '#6366F1';
+    return `
+    <div class="fav-card animate-in" id="favcard-${escH(e.id)}" style="animation-delay:${idx*0.04}s">
+      <div class="fav-card-rank"><span class="fav-rank-num">${String(idx+1).padStart(2,'0')}</span></div>
+      <div class="fav-card-play">
+        <button class="fav-play-btn ${e.hasAudio?'':'no-audio'}" onclick="event.stopPropagation(); playAudio('${escH(e.id)}','${escH(e.titre)}',${!!e.hasAudio})" title="${e.hasAudio?'Écouter':'Pas de fichier audio'}">
+          <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        </button>
+      </div>
+      <div class="fav-card-body">
+        <div class="fav-card-meta">
+          <span class="fav-theme-chip" style="background:${hexAlpha(themeColor,.13)};color:${themeColor};border:1px solid ${hexAlpha(themeColor,.3)}">${escH(e.theme||'—')}</span>
+          <span class="fav-card-date"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>${fmtDate(e.date)}</span>
+        </div>
+        <div class="fav-card-title">${escH(e.titre)}</div>
+        <div class="fav-card-info">
+          <span class="fav-info-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>${escH(e.duree)}</span>
+          <span class="fav-info-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 18v-6a9 9 0 0118 0v6"/><path d="M21 19a2 2 0 01-2 2h-1a2 2 0 01-2-2v-3a2 2 0 012-2h3zM3 19a2 2 0 002 2h1a2 2 0 002-2v-3a2 2 0 00-2-2H3z"/></svg>${e.ecoutes} écoute${e.ecoutes!==1?'s':''}</span>
+        </div>
+      </div>
+      <div class="fav-card-actions" onclick="event.stopPropagation()">
+        <button class="fav-heart-btn" onclick="removeFavori('${escH(e.id)}', this)" title="Retirer des favoris">
+          <svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+        </button>
+        ${S.isAdmin ? `
+        <div class="fav-menu-btn" onclick="toggleDropdown('fav-dd-${escH(e.id)}',event)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+          <div class="dropdown-menu" id="fav-dd-${escH(e.id)}">
+            <div class="dropdown-item danger" onclick="confirmDeleteFromFavoris('${escH(e.id)}','${escH(e.titre)}');event.stopPropagation()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>Supprimer
+            </div>
+          </div>
+        </div>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function removeFavori(id, btn) {
+  btn.classList.add('burst');
+  btn.addEventListener('animationend', () => btn.classList.remove('burst'), { once:true });
+  google.script.run
+    .withSuccessHandler(r => {
+      if (!r || !r.success) { showToast('Erreur','error'); return; }
+      const card = document.getElementById('favcard-'+id);
+      if (card) {
+        card.classList.add('removing');
+        card.addEventListener('animationend', () => {
+          S.favoris = S.favoris.filter(e => e.id !== id);
+          S.favoriIds.delete(id);
+          const n = S.favoris.length;
+          document.getElementById('fav-badge').textContent      = n || '0';
+          document.getElementById('fav-hero-count').textContent = n;
+          renderFavoris();
+        }, { once: true });
+      }
+      showToast('Retiré des favoris','info');
+    })
+    .withFailureHandler(() => showToast('Erreur','error'))
+    .toggleFavori(id, S.userEmail);
+}
+
+function confirmDeleteFromFavoris(id, titre) {
+  closeAllDropdowns();
+  S.confirmCb = () => {
+    google.script.run.withSuccessHandler(r => {
+      if (r && r.success) {
+        S.favoris = S.favoris.filter(e => e.id !== id);
+        S.enseignements = S.enseignements.filter(e => e.id !== id);
+        const n = S.favoris.length;
+        document.getElementById('fav-badge').textContent      = n || '0';
+        document.getElementById('fav-hero-count').textContent = n;
+        renderFavoris();
+        loadThemes();
+        loadDashboard();
+        showToast('Enseignement supprimé','success');
+      } else {
+        showToast(r?.error || 'Erreur','error');
+      }
+    }).supprimerEnseignement(id);
+  };
+  document.getElementById('confirm-title').textContent = 'Supprimer "' + titre + '" ?';
+  document.getElementById('confirm-desc').textContent  = 'Cet enseignement sera définitivement supprimé de votre bibliothèque.';
+  document.getElementById('modal-confirm-overlay').classList.add('open');
+}
+
+function _parseDateTS(str) {
+  if (!str) return 0;
+  const p = String(str).split('/');
+  if (p.length === 3) return new Date(+p[2], +p[1]-1, +p[0]).getTime();
+  const d = new Date(str);
+  return isNaN(d) ? 0 : d.getTime();
+}
+
+// ═══════════════════════════════════════════════════════════
+//  DÉCONNEXION
+// ═══════════════════════════════════════════════════════════
+function logout() {
+  try { localStorage.removeItem('ens_session_v1'); } catch(_) {}
+  S.userEmail='';S.isAdmin=false;S.loggedIn=false;
+  S.themes=[];S.enseignements=[];S.favoris=[];S.favoriIds=new Set();
+  S.favLoaded=false;S.currentTheme=null;S.currentEnsId=null;S.audioFiles=[];S.docsData=[];
+  document.body.classList.remove('user-mode');
+  document.querySelectorAll('.modal-overlay').forEach(function(m){m.classList.remove('open');});
+  document.getElementById('sidebar-avatar').textContent='?';
+  document.getElementById('sidebar-username').textContent='—';
+  document.getElementById('sidebar-role').textContent='Connexion en cours…';
+  var app=document.getElementById('app');
+  app.style.opacity='0';app.style.transition='opacity .25s ease';
+  setTimeout(function(){
+    app.style.display='none';app.style.opacity='';app.style.transition='';
+    var lp=document.getElementById('login-page');
+    lp.style.display='flex';lp.style.opacity='0';lp.style.transition='opacity .3s ease';
+    document.getElementById('login-email').value='';
+    document.getElementById('login-error').classList.remove('show');
+    document.getElementById('login-email').classList.remove('error');
+    document.getElementById('login-btn').disabled=false;
+    document.getElementById('login-btn').textContent='Accéder à l’application';
+    setTimeout(function(){lp.style.opacity='1';},20);
+    setTimeout(function(){document.getElementById('login-email').focus();},350);
+  },260);
+}
+
+</script>
+</body>
+</html>
